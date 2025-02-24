@@ -1,3 +1,9 @@
+# Load variables from .env
+ifneq (,$(wildcard .env))
+    include .env
+    export $(shell sed 's/=.*//' .env)
+endif
+
 ########
 # ALL  #
 ########
@@ -28,6 +34,28 @@ reset:
 	docker compose up --build -d
 	@echo "All containers have been reset and are running!"
 
+migrate-up:
+	@echo "Running migrations..."
+	docker run --rm \
+		--network haveachat-network \
+		-v $(PWD)/haveachat-backend/migrations:/migrations \
+		migrate/migrate \
+		-path=/migrations \
+		-database "mysql://$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp(haveachat-mysql:3306)/$(MYSQL_DATABASE)" \
+		up
+	@echo "Migrations have been applied!"
+
+migrate-rollback:
+	@echo "Rolling back migrations..."
+	docker run --rm \
+		--network haveachat-network \
+		-v $(PWD)/haveachat-backend/migrations:/migrations \
+		migrate/migrate \
+		-path=/migrations \
+		-database "mysql://$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp(haveachat-mysql:3306)/$(MYSQL_DATABASE)" \
+		down $(arg)
+	@echo "Migrations have been rolled back!"
+
 #########
 # DB    #
 #########
@@ -52,6 +80,7 @@ reset-db:
 	@echo "Rebuilding and starting the database container..."
 	docker compose up -d --build db
 	@echo "Database container has been reset and is running!"
+
 
 ########### 
 # Backend #
