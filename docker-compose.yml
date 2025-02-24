@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-haveachat-data:/var/lib/mysql
+    networks:
+      - haveachat-network
+
+  backend:
+    build: ./haveachat-backend  # Build using Dockerfile in the 'haveachat-backend' directory
+    container_name: haveachat-backend
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db         
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+    ports:
+      - "8080:8080"
+    networks:
+      - haveachat-network
+
+  frontend:
+    build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
+    container_name: haveachat-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - haveachat-network
+
+networks:
+  haveachat-network:
+    driver: bridge
+
+volumes:
+  mysql-haveachat-data:
