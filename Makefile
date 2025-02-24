@@ -3,24 +3,29 @@
 ########
 build:
 	@echo "Building all containers..."
-	docker-compose build
+	docker compose build
 	@echo "Containers have been built!"
 
 up:
 	@echo "Starting all containers..."
-	docker-compose up
+	docker compose up -d
 	@echo "Containers are up and running!"
+
+up-build:
+	@echo "Building and starting all containers..."
+	docker compose up --build -d
+	@echo "All containers have been built and are up and running!"
 
 down:
 	@echo "Stopping and removing all containers..."
-	docker-compose down
+	docker compose down
 	@echo "Containers have been stopped and removed!"
 
 reset:
 	@echo "Stopping and removing all containers and volumes..."
-	docker-compose down --volumes
+	docker compose down --volumes
 	@echo "Rebuilding and starting containers..."
-	docker-compose up --build
+	docker compose up --build -d
 	@echo "All containers have been reset and are running!"
 
 #########
@@ -28,24 +33,24 @@ reset:
 #########
 build-db:
 	@echo "Building the database container..."
-	docker-compose build db
+	docker compose build db
 	@echo "Database container has been built!"
 
 up-db:
 	@echo "Starting the database container..."
-	docker-compose up db
+	docker compose up -d db
 	@echo "Database container is running!"
 
 down-db:
 	@echo "Stopping and removing the database container..."
-	docker-compose down db
+	docker compose down db
 	@echo "Database container has been stopped and removed!"
 
 reset-db:
 	@echo "Stopping and removing the database container and volumes..."
-	docker-compose down --volumes db
+	docker compose down --volumes db
 	@echo "Rebuilding and starting the database container..."
-	docker-compose up --build db
+	docker compose up -d --build db
 	@echo "Database container has been reset and is running!"
 
 ########### 
@@ -53,24 +58,24 @@ reset-db:
 ###########
 build-backend:
 	@echo "Building the backend container..."
-	docker-compose build backend
+	docker compose build backend
 	@echo "Backend container has been built!"
 
 up-backend:
 	@echo "Starting the backend container..."
-	docker-compose up backend
+	docker compose up -d backend
 	@echo "Backend container is running!"
 
 down-backend:
 	@echo "Stopping and removing the backend container..."
-	docker-compose down backend
+	docker compose down backend
 	@echo "Backend container has been stopped and removed!"
 
 reset-backend:
 	@echo "Stopping and removing the backend container..."
-	docker-compose down --volumes backend
+	docker compose down --volumes backend
 	@echo "Rebuilding and starting the backend container..."
-	docker-compose up --build backend
+	docker compose up -d --build backend
 	@echo "Backend container has been reset and is running!"
 
 ############
@@ -78,22 +83,22 @@ reset-backend:
 ############
 build-frontend:
 	@echo "Building the frontend container..."
-	docker-compose build frontend
+	docker compose build frontend
 	@echo "Frontend container has been built!"
-	
+
 up-frontend:
 	@echo "Starting the frontend container..."
-	docker-compose up frontend
+	docker compose up -d frontend
 	@echo "Frontend container is running!"
 
 down-frontend:
 	@echo "Stopping and removing the frontend container..."
-	docker-compose down frontend
+	docker compose down frontend
 	@echo "Frontend container has been stopped and removed!"
 
 reset-frontend:
 	@echo "Stopping and removing the frontend container..."
-	docker-compose down --volumes frontend
+	docker compose down --volumes frontend
 	@echo "Rebuilding and starting the frontend container..."
-	docker-compose up --build frontend
+	docker compose up -d --build frontend
 	@echo "Frontend container has been reset and is running!"
