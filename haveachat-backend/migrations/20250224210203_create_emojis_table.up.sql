@@ -1,0 +1,8 @@
+CREATE TABLE emojis (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  chat_id INT,
+  user_id INT,
+  emoji_uni_code VARCHAR(255) CHARACTER SET utf8mb4,
+  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

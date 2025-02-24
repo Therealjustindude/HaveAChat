@@ -45,6 +45,24 @@ migrate-up:
 		up
 	@echo "Migrations have been applied!"
 
+get-current-migration-ver:
+	docker run --rm \
+		--network haveachat-network \
+		-v /Users/justindavies/Development/my_code/HaveAChat/haveachat-backend/migrations:/migrations \
+		migrate/migrate \
+		-path=/migrations \
+		-database "mysql://justin_davies:th1s_i5_4_M3@tcp(haveachat-mysql:3306)/haveachat_db" \
+		version
+
+force-clean-db:
+	docker run --rm \
+		--network haveachat-network \
+		-v /Users/justindavies/Development/my_code/HaveAChat/haveachat-backend/migrations:/migrations \
+		migrate/migrate \
+		-path=/migrations \
+		-database "mysql://justin_davies:th1s_i5_4_M3@tcp(haveachat-mysql:3306)/haveachat_db" \
+		force $(version)
+
 migrate-rollback:
 	@echo "Rolling back migrations..."
 	docker run --rm \
