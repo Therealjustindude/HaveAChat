@@ -16,20 +16,22 @@ services:
     networks:
       - haveachat-network
 
-  # backend:
-  #   build: ./haveachat-backend  # Build using Dockerfile in the 'haveachat-backend' directory
-  #   container_name: haveachat-backend
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     DB_HOST: db         
-  #     DB_USER: ${MYSQL_USER}
-  #     DB_PASSWORD: ${MYSQL_PASSWORD}
-  #     DB_NAME: ${MYSQL_DATABASE}
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - haveachat-network
+  backend:
+    build: ./haveachat-backend  # Build using Dockerfile in the 'haveachat-backend' directory
+    container_name: haveachat-backend
+    depends_on:
+      - db
+    environment:
+      DB_HOST: ${DB_HOST}        
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_PORT: ${DB_PORT}
+      SERVER_PORT: ${SERVER_PORT}
+    ports:
+      - "8080:8080"
+    networks:
+      - haveachat-network
 
   # frontend:
   #   build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
