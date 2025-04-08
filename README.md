@@ -64,6 +64,9 @@ This make command is used to apply database migrations to the MySQL container ru
 
 This command helps keep the database schema in sync with the application code and ensures that necessary database changes are automatically applied.
 
+#### Local Development Notes
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
