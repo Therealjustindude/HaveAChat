@@ -22,6 +22,8 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	UserRepository() *UserRepository
 }
 
 type service struct {
@@ -58,6 +60,11 @@ func New() Service {
 		db: db,
 	}
 	return dbInstance
+}
+
+// UserRepository returns an instance of UserRepository
+func (s *service) UserRepository() *UserRepository {
+	return &UserRepository{db: s.db}
 }
 
 // Health checks the health of the database connection by pinging the database.
