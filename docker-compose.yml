@@ -28,11 +28,13 @@ services:
       DB_NAME: ${MYSQL_DATABASE}
       DB_PORT: ${DB_PORT}
       SERVER_PORT: ${SERVER_PORT}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
     ports:
       - "8080:8080"
     networks:
       - haveachat-network
-
+  
   # frontend:
   #   build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
   #   container_name: haveachat-frontend

@@ -5,20 +5,30 @@ import (
 	"log"
 	"net/http"
 
+	"haveachat-backend/internal/oauth"
+
 	"github.com/gorilla/mux"
 )
 
-func (s *Server) RegisterRoutes() http.Handler {
-	r := mux.NewRouter()
+func (s *Server) RegisterRoutes() *mux.Router {
+	muxr := mux.NewRouter()
 
 	// Apply CORS middleware
-	r.Use(s.corsMiddleware)
+	muxr.Use(s.corsMiddleware)
+	muxr.Use(s.loggingMiddleware)
 
-	r.HandleFunc("/", s.HelloWorldHandler)
+	muxr.HandleFunc("/health", s.healthHandler)
+	// Google oauthi
+	muxr.HandleFunc("/auth/google/login", oauth.OauthGoogleLogin)
+	muxr.HandleFunc("/auth/google/callback", oauth.OauthGoogleCallback(s.db))
+	return muxr
+}
 
-	r.HandleFunc("/health", s.healthHandler)
-
-	return r
+func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Received request for %s", r.URL.Path) // Log the route being accessed
+		next.ServeHTTP(w, r)
+	})
 }
 
 // CORS middleware
