@@ -5,21 +5,36 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestHandler(t *testing.T) {
-	s := &Server{}
-	server := httptest.NewServer(http.HandlerFunc(s.HelloWorldHandler))
+	// Initialize a Gin instance
+	r := gin.Default()
+
+	// Register the route with Gin
+	r.GET("/hello", func(c *gin.Context) {
+		s := &Server{}
+		s.HelloWorldHandler(c)
+	})
+
+	// Create the test server
+	server := httptest.NewServer(r)
 	defer server.Close()
-	resp, err := http.Get(server.URL)
+
+	// Make the GET request
+	resp, err := http.Get(server.URL + "/hello")
 	if err != nil {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
+
 	// Assertions
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected status OK; got %v", resp.Status)
 	}
+
 	expected := "{\"message\":\"Hello World\"}"
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

@@ -1,73 +1,52 @@
 package server
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"haveachat-backend/internal/oauth"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
-func (s *Server) RegisterRoutes() *mux.Router {
-	muxr := mux.NewRouter()
+func (s *Server) RegisterRoutes() *gin.Engine {
+	router := gin.New()
 
-	// Apply CORS middleware
-	muxr.Use(s.corsMiddleware)
-	muxr.Use(s.loggingMiddleware)
+	// Apply CORS middleware with custom configuration
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Replace with your frontend's origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
-	muxr.HandleFunc("/health", s.healthHandler)
-	// Google oauthi
-	muxr.HandleFunc("/auth/google/login", oauth.OauthGoogleLogin)
-	muxr.HandleFunc("/auth/google/callback", oauth.OauthGoogleCallback(s.db))
-	return muxr
+	router.Use(s.loggingMiddleware())
+
+	// Define routes
+	router.GET("/health", s.healthHandler)
+
+	router.GET("/auth/google/login", oauth.OauthGoogleLogin)
+
+	router.GET("/auth/google/callback", oauth.OauthGoogleCallback(s.db))
+
+	return router
 }
 
-func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Received request for %s", r.URL.Path) // Log the route being accessed
-		next.ServeHTTP(w, r)
-	})
-}
-
-// CORS middleware
-func (s *Server) corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// CORS Headers
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Wildcard allows all origins
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type")
-		w.Header().Set("Access-Control-Allow-Credentials", "false") // Credentials not allowed with wildcard origins
-
-		// Handle preflight OPTIONS requests
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
+func (s *Server) loggingMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Printf("Received request for %s", c.Request.URL.Path)
+		c.Next()
 	}
-
-	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.db.Health())
+func (s *Server) HelloWorldHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+}
 
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
+func (s *Server) healthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, s.db.Health())
 }

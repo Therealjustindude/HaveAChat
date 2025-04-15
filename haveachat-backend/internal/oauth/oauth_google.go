@@ -6,16 +6,17 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	_ "github.com/joho/godotenv/autoload"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"haveachat-backend/internal/database"
 	"haveachat-backend/internal/models"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 // Scopes: OAuth 2.0 scopes provide a way to limit he amount of access that is granted to an access token.
@@ -29,32 +30,32 @@ var googleOauthConfig = &oauth2.Config{
 
 const oauthGoogleUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
 
-func OauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
+func OauthGoogleLogin(c *gin.Context) {
 	// Create oauthState cookie
-	oauthState := generateStateOauthCookie(w)
+	oauthState := generateStateOauthCookie(c)
 	/*
 		AuthCodeURL receive state that is a token to protect the user from CSRF attacks. You must always provide a non-empty string and
 		validate that it matches the the state query parameter on your redirect callback.
 	*/
 	u := googleOauthConfig.AuthCodeURL(oauthState)
-	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
+	c.Redirect(http.StatusTemporaryRedirect, u)
 }
 
-func OauthGoogleCallback(db database.Service) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Read oauthState from Cookie
-		oauthState, _ := r.Cookie("oauthstate")
-
-		if r.FormValue("state") != oauthState.Value {
-			log.Println("invalid oauth google state")
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+func OauthGoogleCallback(db database.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Retrieve oauthState from cookie
+		oauthState, err := c.Request.Cookie("oauthstate")
+		if err != nil || c.Query("state") != oauthState.Value {
+			log.Println("Invalid OAuth state")
+			c.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
-		data, err := getUserDataFromGoogle(r.FormValue("code"))
+		// Exchange code for user data
+		data, err := getUserDataFromGoogle(c.Query("code"))
 		if err != nil {
-			log.Println(err.Error())
-			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+			log.Println("Error retrieving user data:", err)
+			c.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
@@ -67,27 +68,25 @@ func OauthGoogleCallback(db database.Service) http.HandlerFunc {
 			Email: data.Email,
 		}
 
-		// Save the user (you can handle errors here)
 		if err := userRepo.SaveOrUpdateUser(user); err != nil {
 			log.Println("Error saving/updating user:", err)
-			http.Redirect(w, r, "/", http.StatusInternalServerError)
+			c.Redirect(http.StatusInternalServerError, "/")
 			return
 		}
 
-		// Response or redirect to another page
-		fmt.Fprintf(w, "UserInfo: %v\n", data)
+		// Respond with user information
+		c.JSON(http.StatusOK, gin.H{"user": data})
 	}
 }
 
-func generateStateOauthCookie(w http.ResponseWriter) string {
-	var expiration = time.Now().Add(365 * 24 * time.Hour)
+func generateStateOauthCookie(c *gin.Context) string {
+	expiration := 365 * 24 * 60 * 60
 
 	b := make([]byte, 16)
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
-	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration}
-	http.SetCookie(w, &cookie)
 
+	c.SetCookie("oauthstate", state, expiration, "/", "", false, true)
 	return state
 }
 
