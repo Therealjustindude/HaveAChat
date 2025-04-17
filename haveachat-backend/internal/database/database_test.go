@@ -54,20 +54,52 @@ func mustStartMySQLContainer() (func(context.Context, ...testcontainers.Terminat
 		return dbContainer.Terminate, err
 	}
 
-	// Ensure the 'users' table (and any other required tables) exists
-	createTableQuery := `
+	// table creation queries
+	createUserTableQuery := `
 		CREATE TABLE users (
-		id INT AUTO_INCREMENT PRIMARY KEY,
-		name VARCHAR(50) NOT NULL,
-		email VARCHAR(255) UNIQUE,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		last_login TIMESTAMP DEFAULT NULL
-	);`
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			name VARCHAR(50) NOT NULL,
+			email VARCHAR(255) UNIQUE,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			last_login TIMESTAMP DEFAULT NULL
+		);
+	`
+	createMemberTableQuery := `
+		CREATE TABLE members (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			channel_id INT,
+			user_id INT,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE CASCADE,
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		);
+	`
+	createChannelTableQuery := `
+		CREATE TABLE channels (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			name VARCHAR(255) NOT NULL,
+			description TEXT,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			is_private BOOLEAN DEFAULT FALSE
+		);
+	`
 
-	// Execute the table creation query
-	_, err = db.Exec(createTableQuery)
+	// Execute the user table creation query
+	_, err = db.Exec(createUserTableQuery)
 	if err != nil {
 		return dbContainer.Terminate, fmt.Errorf("could not create users table: %v", err)
+	}
+
+	// Execute the channel table creation query
+	_, err = db.Exec(createChannelTableQuery)
+	if err != nil {
+		return dbContainer.Terminate, fmt.Errorf("could not create members table: %v", err)
+	}
+
+	// Execute the member table creation query
+	_, err = db.Exec(createMemberTableQuery)
+	if err != nil {
+		return dbContainer.Terminate, fmt.Errorf("could not create members table: %v", err)
 	}
 
 	return dbContainer.Terminate, err

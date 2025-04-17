@@ -2,8 +2,8 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"haveachat-backend/internal/models"
+	"haveachat-backend/internal/utils"
 	"log"
 	"time"
 )
@@ -21,11 +21,19 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 // CreateUser inserts a new user into the database
 func (repo *UserRepository) CreateUser(user *models.User) error {
 	query := `INSERT INTO users (name, email, created_at, last_login) VALUES (?, ?, ?, ?)`
-	_, err := repo.db.Exec(query, user.Name, user.Email, time.Now().UTC(), time.Now().UTC())
+	result, err := repo.db.Exec(query, user.Name, user.Email, time.Now().UTC(), time.Now().UTC())
 	if err != nil {
 		log.Println("Error creating user:", err)
 		return err
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Println("Error retrieving user last insert ID:", err)
+		return err
+	}
+
+	user.ID = int(id)
 	log.Println("User created successfully:", user.Email)
 	return nil
 }
@@ -88,12 +96,12 @@ func (repo *UserRepository) GetUserByID(userID int) (*models.User, error) {
 	}
 
 	// Convert createdAt and lastLogin from []byte to time.Time
-	user.CreatedAt, err = parseTimestamp(createdAt)
+	user.CreatedAt, err = utils.ParseTimestamp(createdAt)
 	if err != nil {
 		log.Println("Error parsing created_at:", err)
 	}
 
-	user.LastLogin, err = parseTimestamp(lastLogin)
+	user.LastLogin, err = utils.ParseTimestamp(lastLogin)
 	if err != nil {
 		log.Println("Error parsing last_login:", err)
 	}
@@ -130,28 +138,16 @@ func (repo *UserRepository) GetUserByEmail(userEmail string) (*models.User, erro
 	}
 
 	// Convert createdAt and lastLogin from []byte to time.Time
-	user.CreatedAt, err = parseTimestamp(createdAt)
+	user.CreatedAt, err = utils.ParseTimestamp(createdAt)
 	if err != nil {
 		log.Println("Error parsing created_at:", err)
 	}
 
-	user.LastLogin, err = parseTimestamp(lastLogin)
+	user.LastLogin, err = utils.ParseTimestamp(lastLogin)
 	if err != nil {
 		log.Println("Error parsing last_login:", err)
 	}
 
 	// Successfully found the user
 	return user, nil
-}
-
-// Helper function to parse timestamp from []byte
-func parseTimestamp(data []byte) (time.Time, error) {
-	// Convert byte slice to string
-	str := string(data)
-	// Parse the string to time.Time
-	parsedTime, err := time.Parse("2006-01-02 15:04:05", str)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("failed to parse time: %v", err)
-	}
-	return parsedTime, nil
 }

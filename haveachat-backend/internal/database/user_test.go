@@ -59,10 +59,17 @@ func TestGetUserByID(t *testing.T) {
 	}
 
 	user := &models.User{
-		Email: "john.doe@example.com",
+		Name:  "Fawn Doe",
+		Email: "fawn.doe@example.com",
 	}
 
-	foundUser, err := repo.GetUserByID(1)
+	// Ensure user is created successfully
+	err := repo.CreateUser(user)
+	if err != nil {
+		t.Fatalf("failed to create user: %v", err)
+	}
+
+	foundUser, err := repo.GetUserByID(user.ID)
 	if err != nil {
 		t.Fatalf("failed to find user ID: %v", err)
 	}
@@ -81,10 +88,17 @@ func TestGetUserByEmail(t *testing.T) {
 	}
 
 	user := &models.User{
-		Email: "john.doe@example.com",
+		Name:  "Dawn Doe",
+		Email: "dawn.doe@example.com",
 	}
 
-	foundUser, err := repo.GetUserByEmail("john.doe@example.com")
+	// Ensure user is created successfully
+	err := repo.CreateUser(user)
+	if err != nil {
+		t.Fatalf("failed to create user: %v", err)
+	}
+
+	foundUser, err := repo.GetUserByEmail(user.Email)
 	if err != nil {
 		t.Fatalf("failed to find user ID: %v", err)
 	}

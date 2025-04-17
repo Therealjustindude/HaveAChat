@@ -24,6 +24,8 @@ type Service interface {
 	Close() error
 
 	UserRepository() *UserRepository
+	MemberRepository() *MemberRepository
+	ChannelRepository() *ChannelRepository
 }
 
 type service struct {
@@ -65,6 +67,16 @@ func New() Service {
 // UserRepository returns an instance of UserRepository
 func (s *service) UserRepository() *UserRepository {
 	return &UserRepository{db: s.db}
+}
+
+// MemberRepository returns an instance of MemberRepository
+func (s *service) MemberRepository() *MemberRepository {
+	return &MemberRepository{db: s.db}
+}
+
+// ChannelRepository returns an instance of MemberRepository
+func (s *service) ChannelRepository() *ChannelRepository {
+	return &ChannelRepository{db: s.db}
 }
 
 // Health checks the health of the database connection by pinging the database.
