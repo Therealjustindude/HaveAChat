@@ -34,45 +34,6 @@ reset:
 	docker compose up --build -d
 	@echo "All containers have been reset and are running!"
 
-migrate-up:
-	@echo "Running migrations..."
-	docker run --rm \
-		--network haveachat-network \
-		-v $(PWD)/haveachat-backend/migrations:/migrations \
-		migrate/migrate \
-		-path=/migrations \
-		-database "mysql://$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp(haveachat-mysql:3306)/$(MYSQL_DATABASE)" \
-		up
-	@echo "Migrations have been applied!"
-
-get-current-migration-ver:
-	docker run --rm \
-		--network haveachat-network \
-		-v /Users/justindavies/Development/my_code/HaveAChat/haveachat-backend/migrations:/migrations \
-		migrate/migrate \
-		-path=/migrations \
-		-database "mysql://justin_davies:th1s_i5_4_M3@tcp(haveachat-mysql:3306)/haveachat_db" \
-		version
-
-force-clean-db:
-	docker run --rm \
-		--network haveachat-network \
-		-v /Users/justindavies/Development/my_code/HaveAChat/haveachat-backend/migrations:/migrations \
-		migrate/migrate \
-		-path=/migrations \
-		-database "mysql://justin_davies:th1s_i5_4_M3@tcp(haveachat-mysql:3306)/haveachat_db" \
-		force $(version)
-
-migrate-rollback:
-	@echo "Rolling back migrations..."
-	docker run --rm \
-		--network haveachat-network \
-		-v $(PWD)/haveachat-backend/migrations:/migrations \
-		migrate/migrate \
-		-path=/migrations \
-		-database "mysql://$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp(haveachat-mysql:3306)/$(MYSQL_DATABASE)" \
-		down $(arg)
-	@echo "Migrations have been rolled back!"
 
 #########
 # DB    #
@@ -125,6 +86,8 @@ reset-backend:
 	docker compose up -d --build backend
 	@echo "Backend container has been reset and is running!"
 
+test-backend: build
+	docker run --rm $(IMAGE_NAME) gradle test
 ############
 # Frontend #
 ############

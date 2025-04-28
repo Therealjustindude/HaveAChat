@@ -1,5 +1,5 @@
 # HaveAChat
-A chat application that allows users to communicate in real-time. The application includes a frontend, backend, and a MySQL database for persistent storage.
+A chat application that allows users to communicate in real-time. The application includes a frontend, backend, and a Postgres database for persistent storage.
 
 ## Table of Contents
 - [Project Setup](#project-setup)
@@ -7,17 +7,15 @@ A chat application that allows users to communicate in real-time. The applicatio
 
 
 ## Project Setup
-The project uses Docker to containerize the backend, frontend, and MySQL database. 
+The project uses Docker to containerize the Java backend, frontend. 
 The Docker Compose file is configured to launch the following services:
-- **MySQL**: A MySQL database for persistent storage.
 - **Backend**: The backend service that interacts with the database.
-    - golang-migrate is used to create migrations
 - **Frontend**: The frontend service that interacts with the backend.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/HaveAChat.git
-    cd HaveAChat
+    git clone https://github.com/yourusername/HaveAChat-Java.git
+    cd HaveAChat-Java
     ```
 
 2. Make sure you have Docker and Docker Compose installed. You can check if they are installed by running:
@@ -34,10 +32,10 @@ The Docker Compose file is configured to launch the following services:
 4. Open the `.env` file and customize it with your database credentials:
     - Ensure the values match your local or production database configuration.
     ```env
-    MYSQL_ROOT_PASSWORD=your_root_password
-    MYSQL_USER=your_mysql_user
-    MYSQL_PASSWORD=your_mysql_password
-    MYSQL_DATABASE=your_database_name
+    POSTGRES_ROOT_PASSWORD=your_root_password
+    POSTGRES_USER=your_postgres_user
+    POSTGRES_PASSWORD=your_postgres_password
+    POSTGRES_DATABASE=your_database_name
     ```
 
 5. Build and start the containers using Makefile commands:
@@ -53,16 +51,6 @@ Once the containers are built and up...
     ```bash
     make migrate-up
     ```
-
-#### Note on migrate-up
-This make command is used to apply database migrations to the MySQL container running in the haveachat-network. It does the following:
-
-* Runs the migrate/migrate Docker container: This container is responsible for managing the database migrations.
-* Mounts the migration files: It mounts the local migrations folder (haveachat-backend/migrations) to the /migrations folder inside the container.
-* Uses environment variables for database credentials: The command connects to the MySQL container using the provided database credentials (MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE), which are set in the environment.
-* Applies the migrations: It runs the up command to apply all the pending migrations to the database schema.
-
-This command helps keep the database schema in sync with the application code and ensures that necessary database changes are automatically applied.
 
 #### Local Development Notes
 

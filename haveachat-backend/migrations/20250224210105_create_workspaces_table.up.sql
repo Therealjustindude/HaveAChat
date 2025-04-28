@@ -1,7 +1,0 @@
-CREATE TABLE workspaces (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  channel_id INT,
-	FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE CASCADE
-);

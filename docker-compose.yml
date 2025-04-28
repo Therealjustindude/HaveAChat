@@ -1,39 +1,35 @@
 services:
   db:
-    image: mysql:latest
-    container_name: haveachat-mysql
+    image: postgres:latest
+    container_name: haveachat-java-postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql-haveachat-data:/var/lib/mysql
-      - ./haveachat-backend/migrations:/migrations 
+      - postgres-haveachat-data:/var/lib/postgresql/data
     networks:
-      - haveachat-network
+      - haveachat-java-network
 
   backend:
-    build: ./haveachat-backend  # Build using Dockerfile in the 'haveachat-backend' directory
-    container_name: haveachat-backend
+    build: ./haveachat-java-backend  # Build using Dockerfile in the 'haveachat-java-backend' directory
+    container_name: haveachat-java-backend
     depends_on:
       - db
     environment:
-      DB_HOST: ${DB_HOST}        
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      DB_NAME: ${MYSQL_DATABASE}
-      DB_PORT: ${DB_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SERVER_PORT: ${SERVER_PORT}
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
     ports:
       - "8080:8080"
     networks:
-      - haveachat-network
+      - haveachat-java-network
   
   # frontend:
   #   build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
@@ -43,12 +39,12 @@ services:
   #   ports:
   #     - "3000:3000"
   #   networks:
-  #     - haveachat-network
+  #     - haveachat-java-network
 
 networks:
-  haveachat-network:
-    name: haveachat-network
+  haveachat-java-network:
+    name: haveachat-java-network
     driver: bridge
 
 volumes:
-  mysql-haveachat-data:
+  postgres-haveachat-data:

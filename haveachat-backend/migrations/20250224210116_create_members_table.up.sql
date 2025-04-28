@@ -1,8 +1,0 @@
-CREATE TABLE members (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  channel_id INT,
-  user_id INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
