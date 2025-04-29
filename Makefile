@@ -17,7 +17,7 @@ up:
 	docker compose up -d
 	@echo "Containers are up and running!"
 
-up-build:
+build-up:
 	@echo "Building and starting all containers..."
 	docker compose up --build -d
 	@echo "All containers have been built and are up and running!"

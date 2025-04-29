@@ -40,16 +40,7 @@ The Docker Compose file is configured to launch the following services:
 
 5. Build and start the containers using Makefile commands:
     ```bash
-    make up-build
-    ```
-
-## Running Migrations
-
-Once the containers are built and up...
-
-5. Apply the database migrations using the following command:
-    ```bash
-    make migrate-up
+    make build-up
     ```
 
 #### Local Development Notes
