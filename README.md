@@ -3,8 +3,6 @@ A chat application that allows users to communicate in real-time. The applicatio
 
 ## Table of Contents
 - [Project Setup](#project-setup)
-- [Running Migrations](#running-migrations)
-
 
 ## Project Setup
 The project uses Docker to containerize the Java backend, frontend. 
