@@ -34,6 +34,19 @@ reset:
 	docker compose up --build -d
 	@echo "All containers have been reset and are running!"
 
+reset-f-b:
+	@echo "Stopping and removing the backend container..."
+	docker compose down --volumes backend
+	@echo "Stopping and removing the frontend container..."
+	docker compose down --volumes frontend
+	@echo "Rebuilding and starting the backend container..."
+	docker compose up -d --build backend
+	@echo "Backend container has been reset and is running!"
+	@echo "Rebuilding and starting the frontend container..."
+	docker compose up -d --build frontend
+	@echo "Frontend container has been reset and is running!"
+
+	
 
 #########
 # DB    #
@@ -88,6 +101,7 @@ reset-backend:
 
 test-backend: build
 	docker run --rm $(IMAGE_NAME) gradle test
+
 ############
 # Frontend #
 ############

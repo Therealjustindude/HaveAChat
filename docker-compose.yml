@@ -31,15 +31,15 @@ services:
     networks:
       - haveachat-java-network
   
-  # frontend:
-  #   build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
-  #   container_name: haveachat-frontend
-  #   depends_on:
-  #     - backend
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - haveachat-java-network
+  frontend:
+    build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
+    container_name: haveachat-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - haveachat-java-network
 
 networks:
   haveachat-java-network:
