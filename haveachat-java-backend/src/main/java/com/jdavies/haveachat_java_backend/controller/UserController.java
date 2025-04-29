@@ -1,5 +1,7 @@
 package com.jdavies.haveachat_java_backend.controller;
 
+import com.jdavies.haveachat_java_backend.dto.UserDTO;
+import com.jdavies.haveachat_java_backend.mapper.UserMapper;
 import com.jdavies.haveachat_java_backend.model.User;
 import com.jdavies.haveachat_java_backend.service.UserService;
 import com.jdavies.haveachat_java_backend.exception.ErrorType;
@@ -19,27 +21,33 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/user")
-    public ResponseEntity<User>  getUserInfo() {
+	@GetMapping("/user")
+    public ResponseEntity<User>  getAuthenticatedUserInfo() {
         OAuth2User oauth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (oauth2User == null) {
+			throw new CustomException(ErrorType.UNAUTHORIZED, "User is not authenticated.");
+		}
+
         String googleId = oauth2User.getAttribute("sub");
 		
-				// Find the user by Google ID
-				Optional<User> user = userService.findByGoogleId(googleId);
+		// Find the user by Google ID
+		Optional<User> user = userService.findByGoogleId(googleId);
 
-				return user
-						.map(ResponseEntity::ok)  // If user exists, return OK with user
-						.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with Google ID: " + googleId)); 
-		}
+		return user
+				.map(ResponseEntity::ok)  // If user exists, return OK with user
+				.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with Google ID: " + googleId));
+	}
 
-		@GetMapping("/user/{id}")
-		public ResponseEntity<User> getUserInfoById(@PathVariable Long id) {
-				// Find the user by ID
-				Optional<User> user = userService.findById(id);
+	@GetMapping("/user/{id}")
+	public ResponseEntity<UserDTO> getUserInfoById(@PathVariable Long id) {
+			// Find the user by ID
+			Optional<User> userOptional = userService.findById(id);
+			User user = userOptional.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with ID: " + id));
 
-				// If user exists, return their data
-				return user
-						.map(ResponseEntity::ok)  // If user exists, return OK with user
-						.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with ID: " + id));  // If not, throw an exception
-		}
+			// convert user entity to user DTO
+			UserDTO userDTO = UserMapper.toDTO(user);
+
+			return ResponseEntity.ok(userDTO);
+	}
 }

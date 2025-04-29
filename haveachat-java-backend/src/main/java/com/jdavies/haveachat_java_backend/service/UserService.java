@@ -16,26 +16,26 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-		private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-		public Optional<User> findByGoogleId(String googleId) {
+    public Optional<User> findByGoogleId(String googleId) {
 				return userRepository.findByGoogleId(googleId);
 		}
 
-		public Optional<User> findById(Long id) {
+    public Optional<User> findById(Long id) {
 				return userRepository.findById(id);
 		}
 
     // This method will create a new user if they don't already exist
     public User createOrUpdateUser(String googleId, String name, String email) {
-				LocalDateTime currTime = LocalDateTime.now();
+        LocalDateTime currTime = LocalDateTime.now();
         
-				Optional<User> user = userRepository.findByGoogleId(googleId);
+        Optional<User> user = userRepository.findByGoogleId(googleId);
 
         return user.map(existingUser -> {
             // If user exists, update last login time
