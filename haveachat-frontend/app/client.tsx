@@ -1,19 +1,13 @@
 /// <reference types="vinxi/types/client" />
-import { hydrateRoot } from 'react-dom/client'
-import { StartClient } from '@tanstack/react-start'
-import { createRouter } from './router'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { hydrateRoot } from 'react-dom/client';
+import { StartClient } from '@tanstack/react-start';
+import { AuthState, createRouter } from './router';
 
-const queryClient = new QueryClient()
+const authState: AuthState = {
+  isAuthenticated: false,
+  user: null,
+};
 
-function App() {
-	return (
-		<QueryClientProvider client={queryClient}>
-			<StartClient router={router} />
-		</QueryClientProvider>
-	);
-}
+const router = createRouter({ authState });
 
-const router = createRouter()
-
-hydrateRoot(document, <App />)
+hydrateRoot(document, <StartClient router={router} />);

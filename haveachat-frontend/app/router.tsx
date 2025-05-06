@@ -1,13 +1,23 @@
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { createRouter as createTanStackRouter } from '@tanstack/react-router';
+import { routeTree } from './routeTree.gen';
 
-export function createRouter() {
+export interface AuthState {
+  isAuthenticated: boolean;
+  user: any | null;
+}
+
+export interface RouterContext {
+  authState: AuthState;
+}
+
+export function createRouter(context: RouterContext) {
   const router = createTanStackRouter({
     routeTree,
     scrollRestoration: true,
-  })
+    context,
+  });
 
-  return router
+  return router;
 }
 
 declare module '@tanstack/react-router' {

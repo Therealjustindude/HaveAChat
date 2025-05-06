@@ -1,16 +1,29 @@
 import { useMutation } from '@tanstack/react-query';
+import { checkAuth } from '../utils/checkAuth';
 
 export const Home = () => {
 	const logoutMutation = useMutation({
 		mutationFn: async () => {
-			await fetch('http://localhost:8080/logout', {
-				method: 'POST',
-				credentials: 'include',  // Make sure cookies are sent
-			});
+			try {
+				const { csrfToken } = await checkAuth();
+				console.log('csrftoken', csrfToken);  // Check the CSRF token
+				if (csrfToken) {
+					const headers: HeadersInit = {
+						'X-XSRF-TOKEN': csrfToken,
+					};
+					await fetch('http://localhost:8080/api/logout', {
+						method: 'POST',
+						credentials: 'include',
+						headers: headers,
+					});
+				} else {
+					console.error('No CSRF token found.');
+				}
+			} catch (error) {
+				console.error('Error during logout mutation:', error);
+			}
 		},
 		onSuccess: () => {
-			// Optionally redirect after logout, clear local state, etc.
-			localStorage.clear(); // Example of clearing local storage if you use it
 			window.location.href = 'http://localhost:3000/login';
 		},
 		onError: (error) => {

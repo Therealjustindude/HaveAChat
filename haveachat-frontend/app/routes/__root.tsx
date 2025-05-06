@@ -1,12 +1,30 @@
 import type { ReactNode } from 'react'
 import {
   Outlet,
-  createRootRoute,
   HeadContent,
   Scripts,
+  createRootRouteWithContext,
+  redirect,
 } from '@tanstack/react-router'
+import { RouterContext } from '../router';
+import { checkAuth } from '../utils/checkAuth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export const Route = createRootRoute({
+const queryClient = new QueryClient();
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async ({ context }) => {
+    const { isAuthenticated } = await checkAuth();
+
+    console.log('sessionCookie', isAuthenticated);
+
+    context.authState = {
+      isAuthenticated,
+      user: null,
+    };
+
+    return { authState: context.authState };
+  },
   head: () => ({
     meta: [
       {
@@ -27,7 +45,9 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
     </RootDocument>
   )
 }
