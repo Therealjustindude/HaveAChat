@@ -1,20 +1,23 @@
 package com.jdavies.haveachat_java_backend.config;
 
 import com.jdavies.haveachat_java_backend.service.UserService;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import java.util.List;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +36,12 @@ public class OAuthSecurityConfig {
             .cors(cors -> cors
                 .configurationSource(corsConfigurationSource())
             )
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+            )
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/google/login", "/logout").permitAll()  // Allow these URLs
+                .requestMatchers("/auth/google/login", "/api/logout").permitAll()  // Allow these URLs
                 .anyRequest().authenticated()  // Require authentication for all other requests
             )
             .oauth2Login(oauth2 -> oauth2
@@ -49,6 +56,19 @@ public class OAuthSecurityConfig {
                     // Save or update the user in the DB using UserService
                     userService.createOrUpdateUser(googleId, name, email);
 
+                    // Ensure CSRF token is set during the login
+                    CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+                    if (csrfToken != null) {
+                        // Set the CSRF token in both response header and cookie
+                        logger.info("CSRF Token after login: {}", csrfToken.getToken());
+                        response.setHeader("X-XSRF-TOKEN", csrfToken.getToken());  // This is for frontend to pick up
+                        Cookie cookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
+                        cookie.setPath("/");  // Ensure the cookie is available for all paths
+                        cookie.setHttpOnly(false);  // Allow JS to access it
+                        cookie.setMaxAge(24 * 60 * 60);  // 1 day expiration (optional)
+                        response.addCookie(cookie);
+                    }
+
                     // Redirect to home or another page after successful login
                     logger.info("Redirecting to localhost 3000 / after login.");
 
@@ -59,7 +79,8 @@ public class OAuthSecurityConfig {
                     // Handle authentication failure
                     response.sendRedirect("http://localhost:3000/login?error");
                 })
-            );
+            )
+            .logout(AbstractHttpConfigurer::disable);
 
         return http.build();  // Return the configured HttpSecurity object
     }
@@ -70,9 +91,9 @@ public class OAuthSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true);  // Allow credentials (cookies, HTTP authentication, etc.)
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
 
         source.registerCorsConfiguration("/**", configuration);
         return source;
