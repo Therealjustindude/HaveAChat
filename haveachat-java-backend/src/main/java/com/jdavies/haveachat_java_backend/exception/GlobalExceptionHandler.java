@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Map;
+
 import com.jdavies.haveachat_java_backend.exception.ErrorType;
 import com.jdavies.haveachat_java_backend.exception.CustomException;
+
 import java.util.HashMap;
 
 @ControllerAdvice

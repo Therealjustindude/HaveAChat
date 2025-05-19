@@ -6,7 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -18,7 +21,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @JsonIgnore 
+    @JsonIgnore
     private String googleId; // The unique identifier from Google
 
     @Column(nullable = false)
@@ -26,19 +29,15 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
-    
-    @Column(nullable = true)
-    private LocalDateTime createdAt;
-		
+
+    @Column(nullable = false, updatable = false)
+    private final Instant createdAt = Instant.now();
+
     @Column(nullable = true)
     private LocalDateTime lastLogin;
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getGoogleId() {
@@ -64,13 +63,9 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     public LocalDateTime getLastLogin() {

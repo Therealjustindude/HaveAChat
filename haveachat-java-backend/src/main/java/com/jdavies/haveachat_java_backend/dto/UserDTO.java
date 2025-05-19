@@ -5,7 +5,8 @@ public class UserDTO {
     private String email;
 
     // Constructors
-    public UserDTO() {}
+    public UserDTO() {
+    }
 
     public UserDTO(String name, String email) {
         this.name = name;
