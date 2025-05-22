@@ -21,7 +21,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-	@GetMapping("/user")
+	@GetMapping("/api/user")
     public ResponseEntity<User>  getAuthenticatedUserInfo() {
         OAuth2User oauth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -39,7 +39,7 @@ public class UserController {
 				.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with Google ID: " + googleId));
 	}
 
-	@GetMapping("/user/{id}")
+	@GetMapping("/api/user/{id}")
 	public ResponseEntity<UserDTO> getUserInfoById(@PathVariable Long id) {
 			// Find the user by ID
 			Optional<User> userOptional = userService.findById(id);

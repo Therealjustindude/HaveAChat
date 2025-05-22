@@ -1,5 +1,7 @@
 package com.jdavies.haveachat_java_backend.service;
 
+import com.jdavies.haveachat_java_backend.dto.UserDTO;
+import com.jdavies.haveachat_java_backend.mapper.UserMapper;
 import com.jdavies.haveachat_java_backend.dto.CreateChannelRequest;
 import com.jdavies.haveachat_java_backend.exception.CustomException;
 import com.jdavies.haveachat_java_backend.exception.ErrorType;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,9 +61,8 @@ public class ChannelService {
         return channel;
     }
 
-    //    addMember - channel, user
     public void addMember(Long channelId, Long userId) {
-        Channel channel = channelRepository.findById(channelId)
+        Channel channel = this.channelRepository.findById(channelId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "Channel not found with ID: " + channelId));
         ;
         User user = this.userRepository.findById(userId)
@@ -70,8 +72,34 @@ public class ChannelService {
         this.channelMemberRepository.save(channelMember);
     }
 
-//    leaveChannel - channelMember
+    public void removeMember(Long channelId, Long userId) {
+        this.channelRepository.findById(channelId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "Channel not found with ID: " + channelId));
 
-//    deleteChannel - remove channel for all members
+        this.userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "user not found with ID: " + userId));
 
+        boolean existed = this.channelMemberRepository.existsByUserIdAndChannelId(userId, channelId);
+        if (!existed) {
+            throw new CustomException(
+                    ErrorType.NOT_FOUND,
+                    "Membership not found for user " + userId + " in channel " + channelId);
+        }
+
+        this.channelMemberRepository.deleteByUserIdAndChannelId(userId, channelId);
+    }
+
+    public List<UserDTO> listMembers(Long channelId) {
+        this.channelRepository.findById(channelId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorType.NOT_FOUND,
+                        "Channel not found with ID: " + channelId));
+
+        return this.channelMemberRepository
+                .findByChannelId(channelId)
+                .stream()
+                .map(ChannelMember::getUser)
+                .map(UserMapper::toDTO)
+                .toList();
+    }
 }
