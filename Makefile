@@ -67,8 +67,10 @@ down-db:
 	@echo "Database container has been stopped and removed!"
 
 reset-db:
-	@echo "Stopping and removing the database container and volumes..."
-	docker compose down --volumes db
+	@echo "Stopping and removing the database container..."
+	docker compose rm -sf db
+	@echo "Removing the database volume..."
+	docker volume rm postgres-haveachat-data || true
 	@echo "Rebuilding and starting the database container..."
 	docker compose up -d --build db
 	@echo "Database container has been reset and is running!"
@@ -94,7 +96,7 @@ down-backend:
 
 reset-backend:
 	@echo "Stopping and removing the backend container..."
-	docker compose down --volumes backend
+	docker compose rm -sf backend
 	@echo "Rebuilding and starting the backend container..."
 	docker compose up -d --build backend
 	@echo "Backend container has been reset and is running!"

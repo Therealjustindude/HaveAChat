@@ -7,12 +7,13 @@ import com.jdavies.haveachat_java_backend.service.UserService;
 import com.jdavies.haveachat_java_backend.exception.ErrorType;
 import com.jdavies.haveachat_java_backend.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,6 +21,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
 	@GetMapping("/api/user")
     public ResponseEntity<User>  getAuthenticatedUserInfo() {

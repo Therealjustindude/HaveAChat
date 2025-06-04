@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres:latest  
     container_name: haveachat-java-postgres
     restart: always
     environment:

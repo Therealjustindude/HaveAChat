@@ -8,8 +8,6 @@ public class CreateChannelRequest {
 
     private Boolean isPrivate = false;   // default if omitted
 
-    private Long creatorId;
-
     public CreateChannelRequest() {
     }
 
@@ -36,13 +34,5 @@ public class CreateChannelRequest {
 
     public void setIsPrivate(Boolean isPrivate) {
         this.isPrivate = isPrivate;
-    }
-
-    public Long getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(Long creatorId) {
-        this.creatorId = creatorId;
     }
 }

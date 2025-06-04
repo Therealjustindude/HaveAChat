@@ -1,13 +1,15 @@
 package com.jdavies.haveachat_java_backend.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.hibernate.annotations.JdbcTypeCode;
 import jakarta.persistence.*;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chats")
+@Table(name = "chats", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "channel_id"}))
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +41,7 @@ public class Chat {
     @Column(nullable = true)
     private Integer totalReplies;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
     private JsonNode message;
 
@@ -65,6 +68,7 @@ public class Chat {
     public JsonNode getMessage() {
         return message;
     }
+
     public void setMessage(JsonNode message) {
         this.message = message;
     }
@@ -72,6 +76,7 @@ public class Chat {
     public LocalDateTime getReadAt() {
         return readAt;
     }
+
     public void setReadAt(LocalDateTime readAt) {
         this.readAt = readAt;
     }
@@ -79,17 +84,31 @@ public class Chat {
     public LocalDateTime getModifiedAt() {
         return modifiedAt;
     }
+
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
 
-    public Boolean getIsDelivered() { return isDelivered; }
-    public void setIsDelivered(Boolean isDelivered) { this.isDelivered = isDelivered; }
+    public Boolean getIsDelivered() {
+        return isDelivered;
+    }
 
-    public Boolean getIsDeleted() { return isDeleted; }
-    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public void setIsDelivered(Boolean isDelivered) {
+        this.isDelivered = isDelivered;
+    }
 
-    public Integer getTotalReplies() { return totalReplies; }
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Integer getTotalReplies() {
+        return totalReplies;
+    }
+
     public void setTotalReplies(Integer totalReplies) {
         this.totalReplies = totalReplies;
     }

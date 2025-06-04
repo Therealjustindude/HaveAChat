@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public interface ChatRepository extends JpaRepository<Channel, Long> {
+public interface ChatRepository extends JpaRepository<Chat, Long> {
     List<Chat> findByChannelId(Long channelId);
 
     // All memberships for a given user

@@ -20,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     @JsonIgnore
     private String googleId; // The unique identifier from Google
 
@@ -29,6 +29,10 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = true)
+    @JsonIgnore
+    private String password;
 
     @Column(nullable = false, updatable = false)
     private final Instant createdAt = Instant.now();
@@ -62,6 +66,15 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Instant getCreatedAt() {

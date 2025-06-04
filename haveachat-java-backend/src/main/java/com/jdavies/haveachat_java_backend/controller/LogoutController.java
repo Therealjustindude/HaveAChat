@@ -1,6 +1,6 @@
 package com.jdavies.haveachat_java_backend.controller;
 
-import com.jdavies.haveachat_java_backend.config.OAuthSecurityConfig;
+import com.jdavies.haveachat_java_backend.config.SecurityConfig;
 import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class LogoutController {
-    private static final Logger logger = LoggerFactory.getLogger(OAuthSecurityConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @PostMapping("/api/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +24,9 @@ public class ChannelController {
     // Channel
     // ——————————————————————————————————————————————
     @PostMapping("/api/channels")
-    public ResponseEntity<Channel> createChannel(@RequestBody CreateChannelRequest req) {
-        Channel createdChannel = channelService.createChannel(req);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdChannel);
+    public ResponseEntity<Channel> createChannel(@RequestBody CreateChannelRequest req, Principal principal) {
+        Channel createdChannel = channelService.createChannel(req, principal);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdChannel);
     }
 
     @GetMapping("/api/channels/{channelId}")

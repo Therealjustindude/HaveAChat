@@ -6,15 +6,17 @@ import com.jdavies.haveachat_java_backend.exception.CustomException;
 import com.jdavies.haveachat_java_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -27,17 +29,24 @@ public class UserService {
         return this.userRepository.findByGoogleId(googleId);
     }
 
+    public Optional<User> findByEmail(String email) {
+        return this.userRepository.findByEmail(email);
+    }
+    public Boolean existsByEmail(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
     public Optional<User> findById(Long id) {
         return this.userRepository.findById(id);
     }
 
     // This method will create a new user if they don't already exist
-    public void createOrUpdateUser(String googleId, String name, String email) {
+    public void createOrUpdateUserOAuth(String googleId, String name, String email) {
         LocalDateTime currTime = LocalDateTime.now();
-        
-        Optional<User> user = this.userRepository.findByGoogleId(googleId);
 
-        user.ifPresentOrElse(existingUser -> {
+        Optional<User> userOptional = userRepository.findByGoogleId(googleId);
+
+        userOptional.ifPresentOrElse(existingUser -> {
             // If user exists, update last login time
             existingUser.setLastLogin(currTime);
             try {
@@ -54,7 +63,6 @@ public class UserService {
             newUser.setName(name);
             newUser.setEmail(email);
             newUser.setLastLogin(currTime);
-
             try {
                 User savedUser = this.userRepository.save(newUser);
                 logger.info("New user with ID: {} created. Storing user info.", savedUser.getId());

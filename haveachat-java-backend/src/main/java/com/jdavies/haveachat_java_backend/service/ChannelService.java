@@ -14,9 +14,12 @@ import com.jdavies.haveachat_java_backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -44,15 +47,25 @@ public class ChannelService {
     }
 
     //    createChannel - desc, name, isPrivate, creator(user)
-    public Channel createChannel(CreateChannelRequest req) {
-        User creator = this.userRepository.findById(req.getCreatorId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "user not found with ID: " + req.getCreatorId()));
+    public Channel createChannel(CreateChannelRequest req, Principal principal) {
+        String userEmail;
+
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
+            Map<String, Object> attributes = oauthToken.getPrincipal().getAttributes();
+            userEmail = (String) attributes.get("email");
+        } else {
+            userEmail = principal.getName();
+        }
+
+        User creator = this.userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with userEmail: " + userEmail));
 
         Channel channel = new Channel();
         channel.setName(req.getName());
-        channel.setDescription(req.getDescription());    // null if omitted
+        channel.setDescription(req.getDescription());
         channel.setIsPrivate(Boolean.TRUE.equals(req.getIsPrivate()));
-        channel.setCreatorId(creator.getId());                     // or c.setCreatorId(...)
+        channel.setCreatorId(creator.getId());
+
         channelRepository.save(channel);
 
         ChannelMember channelMember = new ChannelMember(creator, channel);
