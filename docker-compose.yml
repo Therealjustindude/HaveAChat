@@ -26,13 +26,18 @@ services:
       SERVER_PORT: ${SERVER_PORT}
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "8080:8080"
     networks:
       - haveachat-java-network
   
   frontend:
-    build: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
+    build:
+      context: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
+      args:
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
     container_name: haveachat-frontend
     depends_on:
       - backend
@@ -40,6 +45,10 @@ services:
       - "3000:3000"
     networks:
       - haveachat-java-network
+    environment:
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+
 
 networks:
   haveachat-java-network:

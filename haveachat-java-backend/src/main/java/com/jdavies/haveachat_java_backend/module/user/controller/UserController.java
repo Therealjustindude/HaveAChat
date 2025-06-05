@@ -8,6 +8,7 @@ import com.jdavies.haveachat_java_backend.module.user.model.User;
 import com.jdavies.haveachat_java_backend.module.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,21 +25,23 @@ public class UserController {
 
 
 	@GetMapping("/api/user")
-    public ResponseEntity<User>  getAuthenticatedUserInfo() {
-        OAuth2User oauth2User = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public ResponseEntity<UserDTO> getAuthenticatedUserInfo() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (oauth2User == null) {
+		if (authentication == null || !authentication.isAuthenticated()) {
 			throw new CustomException(ErrorType.UNAUTHORIZED, "User is not authenticated.");
 		}
 
-        String googleId = oauth2User.getAttribute("sub");
-		
-		// Find the user by Google ID
-		Optional<User> user = userService.findByGoogleId(googleId);
+		Object principal = authentication.getPrincipal();
 
-		return user
-				.map(ResponseEntity::ok)  // If user exists, return OK with user
-				.orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with Google ID: " + googleId));
+		if (!(principal instanceof User)) {
+			throw new CustomException(ErrorType.UNAUTHORIZED, "Invalid user principal.");
+		}
+
+		User user = (User) principal;
+		UserDTO userDTO = UserMapper.toDTO(user);
+
+		return ResponseEntity.ok(userDTO);
 	}
 
 	@GetMapping("/api/user/{id}")

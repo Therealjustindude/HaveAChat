@@ -1,11 +1,7 @@
 package com.jdavies.haveachat_java_backend.module.user.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -20,9 +16,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = false)
     @JsonIgnore
-    private String googleId; // The unique identifier from Google
+    private String oauthId;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
     @Column(nullable = false)
     private String name;
@@ -44,12 +44,20 @@ public class User {
         return id;
     }
 
-    public String getGoogleId() {
-        return googleId;
+    public String getOauthId() {
+        return oauthId;
     }
 
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId;
+    public void setOauthId(String oauthId) {
+        this.oauthId = oauthId;
+    }
+
+    public AuthProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(AuthProvider provider) {
+        this.provider = provider;
     }
 
     public String getName() {

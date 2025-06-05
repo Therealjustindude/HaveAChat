@@ -1,5 +1,6 @@
 package com.jdavies.haveachat_java_backend.module.auth.util;
 
+import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jws;
@@ -14,16 +15,19 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    final private SecretKey secretKey;
+    private final SecretKey secretKey;
+
     public JwtUtil(@Value("${jwt.secret}") String base64Secret) {
         byte[] keyBytes = Base64.getDecoder().decode(base64Secret);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String googleId, String email) {
+    public String generateToken(AuthProvider provider, String oauthId, String email) {
         return Jwts.builder()
-                .setSubject(googleId)
+                .setSubject(provider + "|" + oauthId) // e.g., "google|abc123"
                 .claim("email", email)
+                .claim("provider", provider)
+                .claim("oauthId", oauthId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -39,19 +43,26 @@ public class JwtUtil {
 
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            // Log the reason if needed
             return false;
         }
     }
 
-    public String extractGoogleId(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.getSubject(); // now returns a Google ID as String
+    // Extract full identifier like "google|abc123"
+    public String extractProviderSubject(String token) {
+        return extractAllClaims(token).getSubject();
     }
 
     public String extractEmail(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("email", String.class);
+        return extractAllClaims(token).get("email", String.class);
+    }
+
+    public AuthProvider extractProvider(String token) {
+        String providerStr = extractAllClaims(token).get("provider", String.class);
+        return AuthProvider.valueOf(providerStr);
+    }
+
+    public String extractOauthId(String token) {
+        return extractAllClaims(token).get("oauthId", String.class);
     }
 
     private Claims extractAllClaims(String token) {

@@ -1,17 +1,23 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Home } from '../components/Home'
+import { useAuth } from '../auth/AuthProvider';
+import { useEffect } from 'react';
 
 export const Route = createFileRoute('/')({
   component: HomeComp,
-  beforeLoad: async ({ context }) => {
-    if (!context.authState.isAuthenticated) {
-      throw redirect({ to: '/login' })
-    }
-  },
 })
 
 function HomeComp() {
-  return (
-    <Home />
-  )
+  const { user, userIsLoading } = useAuth();
+  const { navigate } = useRouter();
+
+  useEffect(() => {
+    if (!user && !userIsLoading) {
+      navigate({ to: '/login', replace: true });
+    }
+  }, [user, userIsLoading, navigate]);
+
+  if (userIsLoading || !user) return <div>Loading...</div>;
+
+  return <Home />;
 }
