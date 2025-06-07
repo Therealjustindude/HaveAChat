@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:latest  
+    container_name: haveachat-java-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-haveachat-data:/var/lib/postgresql/data
+    networks:
+      - haveachat-java-network
+
+  backend:
+    build:
+      context: ./haveachat-java-backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./haveachat-java-backend:/app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SERVER_PORT: ${SERVER_PORT}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    networks:
+      - haveachat-java-network
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./haveachat-frontend
+      dockerfile: Dockerfile.dev
+      args:
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+    volumes:
+      - ./haveachat-frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+    ports:
+      - "3000:3000"
+    networks:
+      - haveachat-java-network
+    depends_on:
+      - backend
+
+networks:
+  haveachat-java-network:
+    name: haveachat-java-network
+    driver: bridge
+
+volumes:
+  postgres-haveachat-data:

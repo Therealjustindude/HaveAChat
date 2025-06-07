@@ -1,8 +1,32 @@
 # Load variables from .env
 ifneq (,$(wildcard .env))
-    include .env
-    export $(shell sed 's/=.*//' .env)
+		include .env
+		export $(shell sed 's/=.*//' .env)
 endif
+
+########
+# DEV  #
+########
+# Spin up the full dev environment
+dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+
+# Stop all containers
+dev-down:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down
+
+# Stop and remove volumes (DB wipe)
+dev-reset:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+
+# Rebuild everything from scratch
+dev-rebuild:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+
+# Bash into db container
+psql:
+	docker exec -it haveachat-java-postgres psql -U $(POSTGRES_USER) -d $(POSTGRES_DATABASE)
 
 ########
 # ALL  #

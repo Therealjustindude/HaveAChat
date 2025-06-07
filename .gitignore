@@ -32,3 +32,8 @@ go.work.sum
 
 db-diagram.md
 architecture-research.md
+
+node_modules
+dist
+.vscode
+.DS_Store
