@@ -23,7 +23,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService,  RefreshTokenService refreshTokenService) {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService, RefreshTokenService refreshTokenService) {
         return new JwtAuthenticationFilter(jwtUtil, userService, refreshTokenService);
     }
 
@@ -35,6 +35,7 @@ public class SecurityConfig {
         return http
                 .cors(Customizer.withDefaults()) // 👈 Enable CORS
                 .csrf(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

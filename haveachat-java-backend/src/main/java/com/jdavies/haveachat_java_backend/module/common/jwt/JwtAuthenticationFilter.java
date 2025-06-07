@@ -36,6 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Skip filtering for swagger-related endpoints
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = extractTokenFromCookie(request, "access_token");
 
         if (StringUtils.hasText(accessToken) && jwtUtil.validateToken(accessToken)) {
@@ -58,10 +66,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 🔄 Set new access token cookie
                 Cookie newAccessCookie = new Cookie("access_token", newAccessToken);
                 newAccessCookie.setHttpOnly(true);
-                newAccessCookie.setSecure(false); // true in prod
+                newAccessCookie.setSecure(true);
                 newAccessCookie.setPath("/");
                 newAccessCookie.setMaxAge(15 * 60);
-                newAccessCookie.setAttribute("SameSite", "Strict");
+                newAccessCookie.setAttribute("SameSite", "None");
                 response.addCookie(newAccessCookie);
 
                 setAuthContext(oauthId, provider);

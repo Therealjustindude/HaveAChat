@@ -60,24 +60,22 @@ public class AuthController {
 
         OAuthService oauthService = serviceFactory.getService(authProvider);
         OAuthUserInfo userInfo = oauthService.getUserInfo(request.getAccessToken());
-        TokenPair tokenPair  = authService.handleOAuthLoginWithRefresh(userInfo);
+        TokenPair tokenPair = authService.handleOAuthLoginWithRefresh(userInfo);
 
         // 🔐 Create the cookies
         Cookie accessCookie = new Cookie("access_token", tokenPair.getAccessToken());
         accessCookie.setHttpOnly(true);
-        // TODO: change to true in production
-        accessCookie.setSecure(false);
         accessCookie.setPath("/"); // send with every request
-        accessCookie.setMaxAge(15 * 60); // 15 mins
-        accessCookie.setAttribute("SameSite", "Strict");
+        accessCookie.setMaxAge(60); // 15 mins
+        accessCookie.setSecure(true);
+        accessCookie.setAttribute("SameSite", "None");
 
         Cookie refreshCookie = new Cookie("refresh_token", tokenPair.getRefreshToken());
         refreshCookie.setHttpOnly(true);
-        // TODO: change to true in production
-        refreshCookie.setSecure(false);
         refreshCookie.setPath("/auth/refresh"); // Limit exposure
         refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        refreshCookie.setAttribute("SameSite", "Strict");
+        refreshCookie.setSecure(true);
+        refreshCookie.setAttribute("SameSite", "None");
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
@@ -104,10 +102,10 @@ public class AuthController {
 
         Cookie accessCookie = new Cookie("access_token", newTokens.getAccessToken());
         accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false); // true in prod
+        accessCookie.setSecure(true);
         accessCookie.setPath("/");
         accessCookie.setMaxAge(15 * 60);
-        accessCookie.setAttribute("SameSite", "Strict");
+        accessCookie.setAttribute("SameSite", "None");
 
         response.addCookie(accessCookie);
 
@@ -116,21 +114,22 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
+        System.out.println("Logout endpoint hit");
         // Clear access token cookie
         Cookie accessCookie = new Cookie("access_token", "");
         accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false); // true in production
         accessCookie.setPath("/");
         accessCookie.setMaxAge(0);
-        accessCookie.setAttribute("SameSite", "Strict");
+        accessCookie.setSecure(true); // ← required for SameSite=None
+        accessCookie.setAttribute("SameSite", "None");
 
         // Clear refresh token cookie
         Cookie refreshCookie = new Cookie("refresh_token", "");
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false); // true in production
         refreshCookie.setPath("/auth/refresh"); // match original path!
         refreshCookie.setMaxAge(0);
-        refreshCookie.setAttribute("SameSite", "Strict");
+        refreshCookie.setSecure(true);
+        refreshCookie.setAttribute("SameSite", "None");
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
