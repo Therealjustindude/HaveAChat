@@ -42,7 +42,13 @@ The Docker Compose file is configured to launch the following services:
     ```
 
 #### Local Development Notes
-
+From backend directory run this command to generate openapi spec:
+```bash
+    openapi-generator-cli generate \
+    -g typescript-fetch \
+    -i ./openapi.json \
+    -o ../haveachat-frontend/app/api
+```
 
 ## License
 

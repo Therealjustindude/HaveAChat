@@ -3,53 +3,40 @@ import {
   Outlet,
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
-  redirect,
-} from '@tanstack/react-router'
-import { RouterContext } from '../router';
-import { checkAuth } from '../utils/checkAuth';
+  createRootRoute,
+} from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthProvider } from '../auth/AuthProvider';
+
 
 const queryClient = new QueryClient();
 
-export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async ({ context }) => {
-    const { isAuthenticated } = await checkAuth();
+const clientId = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID;
 
-    console.log('sessionCookie', isAuthenticated);
-
-    context.authState = {
-      isAuthenticated,
-      user: null,
-    };
-
-    return { authState: context.authState };
-  },
+export const Route = createRootRoute({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'HaveAChat',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'HaveAChat' },
     ],
   }),
   component: RootComponent,
-})
+});
 
 function RootComponent() {
   return (
     <RootDocument>
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
+      <GoogleOAuthProvider clientId={clientId}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <Outlet />
+          </AuthProvider>
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     </RootDocument>
-  )
+  );
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {

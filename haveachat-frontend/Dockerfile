@@ -4,6 +4,12 @@ FROM node:23.5.0-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+ARG VITE_GOOGLE_OAUTH_CLIENT_ID
+ENV VITE_GOOGLE_OAUTH_CLIENT_ID=$VITE_GOOGLE_OAUTH_CLIENT_ID
+        
+Arg VITE_REACT_APP_API_BASE_URL
+ENV VITE_REACT_APP_API_BASE_URL=$VITE_REACT_APP_API_BASE_URL
+
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
