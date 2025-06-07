@@ -1,0 +1,12 @@
+.openapi-generator-ignore
+apis/AuthControllerApi.ts
+apis/ChannelControllerApi.ts
+apis/UserControllerApi.ts
+apis/index.ts
+index.ts
+models/Channel.ts
+models/CreateChannelRequest.ts
+models/OAuthLoginRequest.ts
+models/UserDTO.ts
+models/index.ts
+runtime.ts
