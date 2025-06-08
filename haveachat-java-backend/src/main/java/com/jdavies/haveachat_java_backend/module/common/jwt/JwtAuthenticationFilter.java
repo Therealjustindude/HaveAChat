@@ -63,13 +63,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String newAccessToken = jwtUtil.generateToken(provider, oauthId, email);
 
+                boolean isDev = request.getServerName().equals("localhost");
+
+
                 // 🔄 Set new access token cookie
                 Cookie newAccessCookie = new Cookie("access_token", newAccessToken);
                 newAccessCookie.setHttpOnly(true);
-                newAccessCookie.setSecure(true);
                 newAccessCookie.setPath("/");
                 newAccessCookie.setMaxAge(15 * 60);
-                newAccessCookie.setAttribute("SameSite", "None");
+                newAccessCookie.setSecure(!isDev);
+                newAccessCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
                 response.addCookie(newAccessCookie);
 
                 setAuthContext(oauthId, provider);

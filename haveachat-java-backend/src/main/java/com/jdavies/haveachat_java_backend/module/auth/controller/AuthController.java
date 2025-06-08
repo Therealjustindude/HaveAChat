@@ -45,7 +45,8 @@ public class AuthController {
     public ResponseEntity<Void> oauthLogin(
             @PathVariable("provider") String provider,
             @RequestBody OAuthLoginRequest request,
-            HttpServletResponse response
+            HttpServletResponse response,
+            HttpServletRequest servletRequest
     ) {
         if (isAlreadyAuthenticated()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -62,20 +63,22 @@ public class AuthController {
         OAuthUserInfo userInfo = oauthService.getUserInfo(request.getAccessToken());
         TokenPair tokenPair = authService.handleOAuthLoginWithRefresh(userInfo);
 
+        boolean isDev = servletRequest.getServerName().equals("localhost");
+
         // 🔐 Create the cookies
         Cookie accessCookie = new Cookie("access_token", tokenPair.getAccessToken());
         accessCookie.setHttpOnly(true);
         accessCookie.setPath("/"); // send with every request
-        accessCookie.setMaxAge(60); // 15 mins
-        accessCookie.setSecure(true);
-        accessCookie.setAttribute("SameSite", "None");
+        accessCookie.setMaxAge(15 * 60); // 15 mins
+        accessCookie.setSecure(!isDev);
+        accessCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
 
         Cookie refreshCookie = new Cookie("refresh_token", tokenPair.getRefreshToken());
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/auth/refresh"); // Limit exposure
+        refreshCookie.setPath("/auth/oauth/refresh-token"); // Limit exposure
         refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        refreshCookie.setSecure(true);
-        refreshCookie.setAttribute("SameSite", "None");
+        refreshCookie.setSecure(!isDev);
+        refreshCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
@@ -84,9 +87,10 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/auth/refresh")
+    @PostMapping("/refresh-token")
     public ResponseEntity<Void> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
+
         if (cookies == null) {
             throw new CustomException(ErrorType.UNAUTHORIZED, "No cookies found");
         }
@@ -97,15 +101,20 @@ public class AuthController {
                 .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorType.UNAUTHORIZED, "Missing refresh token"));
 
+        if (refreshToken == null) {
+            throw new CustomException(ErrorType.UNAUTHORIZED, "Missing refresh token");
+        }
 
         TokenPair newTokens = authService.refreshAccessToken(refreshToken);
 
+        boolean isDev = request.getServerName().equals("localhost");
+
         Cookie accessCookie = new Cookie("access_token", newTokens.getAccessToken());
         accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(true);
         accessCookie.setPath("/");
         accessCookie.setMaxAge(15 * 60);
-        accessCookie.setAttribute("SameSite", "None");
+        accessCookie.setSecure(!isDev);
+        accessCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
 
         response.addCookie(accessCookie);
 
@@ -113,23 +122,24 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
-        System.out.println("Logout endpoint hit");
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        boolean isDev = request.getServerName().equals("localhost");
+
         // Clear access token cookie
         Cookie accessCookie = new Cookie("access_token", "");
         accessCookie.setHttpOnly(true);
         accessCookie.setPath("/");
         accessCookie.setMaxAge(0);
-        accessCookie.setSecure(true); // ← required for SameSite=None
-        accessCookie.setAttribute("SameSite", "None");
+        accessCookie.setSecure(!isDev);
+        accessCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
 
         // Clear refresh token cookie
         Cookie refreshCookie = new Cookie("refresh_token", "");
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/auth/refresh"); // match original path!
+        refreshCookie.setPath("/auth/oauth/refresh-token");
         refreshCookie.setMaxAge(0);
-        refreshCookie.setSecure(true);
-        refreshCookie.setAttribute("SameSite", "None");
+        accessCookie.setSecure(!isDev);
+        accessCookie.setAttribute("SameSite", isDev ? "Lax" : "None");
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
