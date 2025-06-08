@@ -1,39 +1,25 @@
-# Stage 1: Build the application
-FROM node:23.5.0-alpine AS builder
-
-# Set working directory
+# Base image
+FROM node:23.5.0-alpine AS base
 WORKDIR /app
-
-ARG VITE_GOOGLE_OAUTH_CLIENT_ID
-ENV VITE_GOOGLE_OAUTH_CLIENT_ID=$VITE_GOOGLE_OAUTH_CLIENT_ID
-        
-Arg VITE_REACT_APP_API_BASE_URL
-ENV VITE_REACT_APP_API_BASE_URL=$VITE_REACT_APP_API_BASE_URL
-
-# Install dependencies
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm ci
 
-# Remove genereate route tree file before building to make sure any new routes get added
-RUN rm -f src/routeTree.gen.ts
-
-# Copy the rest of the application code
+# --- Dev Stage ---
+FROM base AS dev
 COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
 
-# Build the application
+# --- Build Stage (for production assets) ---
+FROM base AS build
+COPY . .
 RUN npm run build
 
-# Stage 2: Run the application
-FROM node:23.5.0-alpine
-
-# Set working directory
+# --- Prod Stage ---
+FROM node:23.5.0-alpine AS prod
 WORKDIR /app
-
-# Copy built assets from the builder stage
-COPY --from=builder /app /app
-
-# Expose the port the app runs on
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package*.json ./
+RUN npm ci --omit=dev
 EXPOSE 3000
-
-# Start the application
 CMD ["npm", "start"]

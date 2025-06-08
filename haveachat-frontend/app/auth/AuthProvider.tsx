@@ -1,7 +1,7 @@
+import { useLogOutMutation } from '@haveachat/hooks/mutations/user/useLogOutMutation';
+import { useMe } from '@haveachat/hooks/queries/user/useMe';
 import { useQueryClient } from '@tanstack/react-query';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useLogOutMutation } from '../hooks/mutations/user/useLogOutMutation';
-import { useMe } from '../hooks/queries/user/useMe';
+import { createContext, useContext } from 'react';
 
 interface AuthContextType {
   user: any | null; // change this once i know the shape

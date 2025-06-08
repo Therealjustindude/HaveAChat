@@ -1,5 +1,5 @@
+import { API_BASE_URL } from '@haveachat/utils/ApiBaseUrl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { API_BASE_URL } from '../../../utils/ApiBaseUrl';
 
 export const useLogOutMutation = () => {
   const queryClient = useQueryClient();

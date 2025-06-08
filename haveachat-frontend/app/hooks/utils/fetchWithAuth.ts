@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../../utils/ApiBaseUrl";
+import { API_BASE_URL } from "@haveachat/utils/ApiBaseUrl";
 
 export const fetchWithAuth = async (inputReq: RequestInfo, init?: RequestInit): Promise<Response> => {
   let res = await fetch(inputReq, {
@@ -8,7 +8,7 @@ export const fetchWithAuth = async (inputReq: RequestInfo, init?: RequestInit): 
 
   if (res.status === 401) {
     // Try refreshing
-    const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    const refreshRes = await fetch(`${API_BASE_URL}/auth/oauth/refresh-token`, {
       method: 'POST',
       credentials: 'include',
     });

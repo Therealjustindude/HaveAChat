@@ -21,6 +21,10 @@ repositories {
 	mavenCentral()
 }
 
+springBoot {
+    mainClass.set("com.jdavies.haveachat_java_backend.HaveachatJavaBackendApplication")
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -40,6 +44,7 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5") // or jjwt-gson if you're using Gson
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks.withType<Test> {

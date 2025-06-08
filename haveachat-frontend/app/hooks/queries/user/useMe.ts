@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { API_BASE_URL } from '../../../utils/ApiBaseUrl';
-import { fetchWithAuth } from '../../utils/fetchWithAuth'
+import { API_BASE_URL } from '@haveachat/utils/ApiBaseUrl';
+import { fetchWithAuth } from '@haveachat/hooks/utils/fetchWithAuth';
 
 
 

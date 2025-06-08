@@ -1,7 +1,7 @@
 # Load variables from .env
 ifneq (,$(wildcard .env))
-    include .env
-    export $(shell sed 's/=.*//' .env)
+		include .env
+		export $(shell sed 's/=.*//' .env)
 endif
 
 ########
@@ -24,7 +24,7 @@ build-up:
 
 down:
 	@echo "Stopping and removing all containers..."
-	docker compose down
+	docker compose down --remove-orphans
 	@echo "Containers have been stopped and removed!"
 
 reset:
@@ -35,16 +35,11 @@ reset:
 	@echo "All containers have been reset and are running!"
 
 reset-f-b:
-	@echo "Stopping and removing the backend container..."
-	docker compose down --volumes backend
-	@echo "Stopping and removing the frontend container..."
-	docker compose down --volumes frontend
-	@echo "Rebuilding and starting the backend container..."
-	docker compose up -d --build backend
-	@echo "Backend container has been reset and is running!"
-	@echo "Rebuilding and starting the frontend container..."
-	docker compose up -d --build frontend
-	@echo "Frontend container has been reset and is running!"
+	@echo "Stopping and removing the backend and frontend containers..."
+	docker compose rm -sf backend frontend
+	@echo "Rebuilding and starting the backend and frontend containers..."
+	docker compose up -d --build backend frontend
+	@echo "Backend and frontend containers have been reset and are running!"
 
 	
 
@@ -63,7 +58,7 @@ up-db:
 
 down-db:
 	@echo "Stopping and removing the database container..."
-	docker compose down db
+	docker compose rm -sf db
 	@echo "Database container has been stopped and removed!"
 
 reset-db:
@@ -91,7 +86,7 @@ up-backend:
 
 down-backend:
 	@echo "Stopping and removing the backend container..."
-	docker compose down backend
+	docker compose rm -sf backend
 	@echo "Backend container has been stopped and removed!"
 
 reset-backend:
@@ -119,7 +114,7 @@ up-frontend:
 
 down-frontend:
 	@echo "Stopping and removing the frontend container..."
-	docker compose down frontend
+	docker compose rm -sf frontend
 	@echo "Frontend container has been stopped and removed!"
 
 reset-frontend:

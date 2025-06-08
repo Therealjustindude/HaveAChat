@@ -1,5 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth } from "@haveachat/auth/AuthProvider";
 
 export const Home = () => {
 	const { logout } = useAuth();

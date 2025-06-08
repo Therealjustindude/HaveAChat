@@ -35,7 +35,7 @@ services:
   frontend:
     build:
       context: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
-      target: prod  # 👈 specify production stage
+      target: dev  # 👈 specify dev stage
       args:
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
         VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
@@ -44,12 +44,16 @@ services:
       - backend
     ports:
       - "3000:3000"
+    command: npm run dev
     networks:
       - haveachat-java-network
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+    volumes:
+      - ./haveachat-frontend:/app
+      - /app/node_modules 
 
 
 networks:
