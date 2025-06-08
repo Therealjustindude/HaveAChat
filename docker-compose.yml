@@ -35,6 +35,7 @@ services:
   frontend:
     build:
       context: ./haveachat-frontend # Build using Dockerfile in the 'haveachat-frontend' directory
+      target: prod  # 👈 specify production stage
       args:
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
         VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
@@ -46,6 +47,7 @@ services:
     networks:
       - haveachat-java-network
     environment:
+      NODE_ENV: production
       VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
 

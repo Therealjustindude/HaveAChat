@@ -1,7 +1,7 @@
+import { useAuth } from "@haveachat/auth/AuthProvider";
+import { API_BASE_URL } from "@haveachat/utils/ApiBaseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from '@tanstack/react-router';
-import { useAuth } from "../auth/AuthProvider";
-import { API_BASE_URL } from "../utils/ApiBaseUrl";
 
 
 export const Login = () => {

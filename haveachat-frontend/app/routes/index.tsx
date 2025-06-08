@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { Home } from '../components/Home'
-import { useAuth } from '../auth/AuthProvider';
+import { Home } from '@haveachat/components/Home'
+import { useAuth } from '@haveachat/auth/AuthProvider';
 import { useEffect } from 'react';
 
 export const Route = createFileRoute('/')({
