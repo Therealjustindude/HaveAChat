@@ -12,7 +12,7 @@ public class Channel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,  unique = true)
     private String name;
 
     @Column(nullable = true)
@@ -25,7 +25,7 @@ public class Channel {
     private Long creatorId;
 
     @Column(nullable = false)
-    private Boolean isPrivate = false;
+    private boolean privateChannel = false;
 
     public Long getId() {
         return id;
@@ -43,7 +43,7 @@ public class Channel {
         return description;
     }
 
-    public void setDescription(String name) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -51,12 +51,12 @@ public class Channel {
         return createdAt;
     }
 
-    public void setIsPrivate(Boolean isPrivate) {
-        this.isPrivate = isPrivate;
+    public void setPrivateChannel(boolean privateChannel) {
+        this.privateChannel = privateChannel;
     }
 
-    public Boolean getIsPrivate() {
-        return isPrivate;
+    public boolean getPrivateChannel() {
+        return privateChannel;
     }
 
     public void setCreatorId(Long creatorId) {
