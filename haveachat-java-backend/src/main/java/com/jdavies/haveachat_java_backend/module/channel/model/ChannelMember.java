@@ -18,11 +18,11 @@ public class ChannelMember {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long userId;
 
     @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
-    private Channel channel;
+    private Long channelId;
 
     @Column(nullable = false, updatable = false)
     private final Instant createdAt = Instant.now();
@@ -30,21 +30,21 @@ public class ChannelMember {
     protected ChannelMember() {
     }
 
-    public ChannelMember(User user, Channel channel) {
-        this.user = user;
-        this.channel = channel;
+    public ChannelMember(Long userId, Long channelId) {
+        this.userId = userId;
+        this.channelId = channelId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public Long getChannelId() {
+        return channelId;
     }
 
     public Instant getCreatedAt() {
