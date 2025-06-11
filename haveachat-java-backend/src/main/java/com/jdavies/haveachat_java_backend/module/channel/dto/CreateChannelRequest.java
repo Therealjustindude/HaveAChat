@@ -1,12 +1,11 @@
 package com.jdavies.haveachat_java_backend.module.channel.dto;
 
-
 public class CreateChannelRequest {
     private String name;
 
-    private String description;          // optional
+    private String description;
 
-    private Boolean isPrivate = false;   // default if omitted
+    private boolean privateChannel = false;
 
     public CreateChannelRequest() {
     }
@@ -28,11 +27,11 @@ public class CreateChannelRequest {
         this.description = description;
     }
 
-    public Boolean getIsPrivate() {
-        return isPrivate;
+    public boolean getPrivateChannel() {
+        return privateChannel;
     }
 
-    public void setIsPrivate(Boolean isPrivate) {
-        this.isPrivate = isPrivate;
+    public void setPrivateChannel(boolean privateChannel) {
+        this.privateChannel = privateChannel;
     }
 }
