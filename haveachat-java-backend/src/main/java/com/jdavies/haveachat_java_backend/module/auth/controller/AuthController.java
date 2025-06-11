@@ -83,6 +83,12 @@ public class AuthController {
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
 
+
+        if (isDev) {
+            System.out.println("🔐 Access Token: " + tokenPair.getAccessToken());
+            System.out.println("🔁 Refresh Token: " + tokenPair.getRefreshToken());
+        }
+
         // You can return a 200 OK without a body
         return ResponseEntity.ok().build();
     }
