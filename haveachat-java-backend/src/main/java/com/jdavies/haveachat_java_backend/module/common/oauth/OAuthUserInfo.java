@@ -1,7 +1,5 @@
 package com.jdavies.haveachat_java_backend.module.common.oauth;
 
-import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
-
 public class OAuthUserInfo {
     private final String oauthId;
     private final String email;

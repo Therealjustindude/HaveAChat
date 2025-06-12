@@ -1,8 +1,8 @@
 package com.jdavies.haveachat_java_backend.module.chat.service;
 
 import com.jdavies.haveachat_java_backend.module.channel.service.ChannelService;
-import com.jdavies.haveachat_java_backend.module.chat.mapper.ChatMessageMapper;
 import com.jdavies.haveachat_java_backend.module.chat.dto.ChatMessageDTO;
+import com.jdavies.haveachat_java_backend.module.chat.mapper.ChatMessageMapper;
 import com.jdavies.haveachat_java_backend.module.chat.model.ChatMessage;
 import com.jdavies.haveachat_java_backend.module.chat.repository.ChatMessageRepository;
 import com.jdavies.haveachat_java_backend.module.exception.CustomException;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ChatMessageService {

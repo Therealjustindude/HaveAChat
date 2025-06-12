@@ -1,6 +1,5 @@
 package com.jdavies.haveachat_java_backend.module.channel.model;
 
-import com.jdavies.haveachat_java_backend.module.user.model.User;
 import jakarta.persistence.*;
 
 import java.time.Instant;

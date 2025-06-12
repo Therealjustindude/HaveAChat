@@ -4,9 +4,9 @@ import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
 import com.jdavies.haveachat_java_backend.module.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDateTime;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByOauthIdAndProvider(String oauthId, AuthProvider provider);
