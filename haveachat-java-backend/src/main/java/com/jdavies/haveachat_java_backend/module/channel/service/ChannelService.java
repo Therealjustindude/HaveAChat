@@ -36,34 +36,13 @@ public class ChannelService {
     }
 
     //    createChannel - desc, name, isPrivate, creator(user)
-    public Channel createChannel(CreateChannelRequest req, Principal principal) {
+    public Channel createChannel(CreateChannelRequest req, User user) {
         if (channelRepository.existsByName(req.getName())) {
             throw new CustomException(ErrorType.CONFLICT, "Channel name already exists");
         }
 
-        String userEmail;
-
-        if (principal instanceof UsernamePasswordAuthenticationToken token) {
-            Object userPrincipal = token.getPrincipal();
-            logger.info("token.getPrincipal(): {}", token.getPrincipal());
-
-            if (userPrincipal instanceof User user) {
-                userEmail = user.getEmail();
-            } else if (userPrincipal instanceof String username) {
-                userEmail = username;
-            } else {
-                throw new CustomException(ErrorType.UNAUTHORIZED, "Unable to extract user email from principal");
-            }
-        } else {
-            userEmail = null;
-        }
-
-        if (userEmail == null || userEmail.isBlank()) {
-            throw new CustomException(ErrorType.UNAUTHORIZED, "User email is missing or invalid");
-        }
-
-        User creator = this.userService.findByEmail(userEmail)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with userEmail: " + userEmail));
+        User creator = this.userService.findByEmail(user.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with userEmail: " + user.getEmail()));
 
         Channel channel = new Channel();
         channel.setName(req.getName());
@@ -122,7 +101,7 @@ public class ChannelService {
                 .toList();
     }
 
-    public boolean isExistingChannel(Long channelId) {
+    public boolean existsByChannelId(Long channelId) {
         return channelRepository.existsById(channelId);
     }
 
