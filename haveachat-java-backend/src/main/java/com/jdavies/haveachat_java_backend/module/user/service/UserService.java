@@ -38,6 +38,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public boolean existsByUserId(Long id) {
+        return userRepository.existsById(id);
+    }
+
     // Create or update user based on OAuth info
     public User createOrUpdateUserOAuth(OAuthUserInfo userInfo) {
         LocalDateTime currTime = LocalDateTime.now();
