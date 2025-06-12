@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-public class ChatDTO {
+public class ChatMessageDTO {
     private Long      id;           // for React keying / edits
     private Long      channelId;    // so you know what room this belongs to
     private Long      userId;       // who sent it
@@ -13,7 +13,7 @@ public class ChatDTO {
     private LocalDateTime modifiedAt;   // if you support editing
     private JsonNode message;
 
-    public ChatDTO() {}
+    public ChatMessageDTO() {}
 
     public Long getId() {
         return id;
