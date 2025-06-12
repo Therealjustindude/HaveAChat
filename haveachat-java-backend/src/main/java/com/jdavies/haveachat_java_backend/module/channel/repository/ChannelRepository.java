@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
         Optional<Channel> findByName(String name);
         boolean existsByName(String name);
+        boolean existsByIdAndCreatorId(Long channelId, Long creatorId);
 }

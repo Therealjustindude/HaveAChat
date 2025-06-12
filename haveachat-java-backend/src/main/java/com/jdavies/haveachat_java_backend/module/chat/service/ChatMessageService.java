@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChatMessageService {
@@ -39,10 +40,6 @@ public class ChatMessageService {
      * Fetch message history for a channel, optionally since a given timestamp or ID.
      */
     public List<ChatMessageDTO> getHistory(Long channelId, Instant since) {
-        if (!channelService.existsByChannelId(channelId)) {
-            throw new CustomException(ErrorType.NOT_FOUND, "Channel not found: " + channelId);
-        }
-
         if (since == null) {
             return this.chatRepo.findByChannelId(channelId)
                     .stream()
@@ -57,16 +54,6 @@ public class ChatMessageService {
     }
 
     public ChatMessageDTO saveChatMessage(ChatMessageDTO chatDto) {
-        // Validate channel exists
-        if (!channelService.existsByChannelId(chatDto.getChannelId())) {
-            throw new CustomException(ErrorType.NOT_FOUND, "Channel not found: " + chatDto.getChannelId());
-        }
-
-        // Validate user exists
-        if (!userService.existsByUserId(chatDto.getUserId())) {
-            throw new CustomException(ErrorType.NOT_FOUND, "User not found: " + chatDto.getUserId());
-        }
-
         // Create entity
         ChatMessage chat = new ChatMessage(chatDto.getUserId(), chatDto.getChannelId());
         chat.setMessage(chatDto.getMessage());
@@ -78,28 +65,32 @@ public class ChatMessageService {
         return ChatMessageMapper.toDTO(saved);
     }
 
-    public void markMessagesAsRead(Long channelId, Long userId, LocalDateTime readAt) {
-        // Validate channel exists
-        if (!channelService.existsByChannelId(channelId)) {
-            throw new CustomException(ErrorType.NOT_FOUND, "Channel not found: " + channelId);
-        }
-
-        // Validate user exists
-        if (!userService.existsByUserId(userId)) {
-            throw new CustomException(ErrorType.NOT_FOUND, "User not found: " + userId);
-        }
-
+    public void markMessagesAsRead(Long channelId, LocalDateTime readAt) {
         List<ChatMessage> unreadMessages = chatRepo.findByChannelIdAndReadAtIsNull(channelId);
-
-        for (ChatMessage chat : unreadMessages) {
-            chat.setReadAt(readAt);
+        if (unreadMessages.isEmpty()) {
+            return; // nothing to do — quietly exit
         }
+
+        unreadMessages.forEach(msg -> msg.setReadAt(readAt));
         chatRepo.saveAll(unreadMessages);
+    }
+
+    public void deleteMessage(Long messageId) {
+        ChatMessage message = chatRepo.findById(messageId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "Message not found"));
+
+        chatRepo.delete(message);
+        // No broadcasting here!
     }
 
     public boolean existsByChatId(Long chatId) {
         return chatRepo.existsById(chatId);
     }
 
-
+    public ChatMessage getByChatMessageIdOrThrow(Long messageId) {
+        return chatRepo.findById(messageId).orElseThrow(() -> new CustomException(
+                ErrorType.NOT_FOUND,
+                "Chat message not found with ID: " + messageId
+        ));
+    }
 }

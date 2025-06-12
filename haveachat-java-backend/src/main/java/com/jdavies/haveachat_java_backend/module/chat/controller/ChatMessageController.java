@@ -1,5 +1,8 @@
 package com.jdavies.haveachat_java_backend.module.chat.controller;
 
+import com.jdavies.haveachat_java_backend.common.annotation.CurrentUser;
+import com.jdavies.haveachat_java_backend.module.channel.service.ChannelMemberService;
+import com.jdavies.haveachat_java_backend.module.channel.service.ChannelService;
 import com.jdavies.haveachat_java_backend.module.chat.dto.ChatMessageDTO;
 import com.jdavies.haveachat_java_backend.module.chat.service.ChatMessageService;
 import com.jdavies.haveachat_java_backend.module.exception.CustomException;
@@ -9,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +22,12 @@ import java.util.List;
 public class ChatMessageController {
 
     private final ChatMessageService chatService;
+
+    @Autowired
+    private ChannelService channelService;
+
+    @Autowired
+    private ChannelMemberService channelMemberService;
 
     private static final Logger logger = LoggerFactory.getLogger(ChatMessageController.class);
 
@@ -35,8 +41,12 @@ public class ChatMessageController {
     @GetMapping("/history/{channelId}")
     public ResponseEntity<List<ChatMessageDTO>> getHistory(
             @PathVariable Long channelId,
-            @RequestParam(required = false) Instant since
+            @RequestParam(required = false) Instant since,
+            @CurrentUser User user
     ) {
+        assertChannelExists(channelId);
+        assertUserIsChannelMember(user.getId(), channelId);
+
         List<ChatMessageDTO> history = chatService.getHistory(channelId, since);
         return ResponseEntity.ok(history);
     }
@@ -45,30 +55,43 @@ public class ChatMessageController {
     @PostMapping("/read/{channelId}")
     public ResponseEntity<?> markAsRead(
             @PathVariable Long channelId,
-            Principal principal
+            @CurrentUser User user
     ) {
-        if (chatService.existsByChatId(channelId)) {
-            throw new CustomException(ErrorType.NOT_FOUND, "Chat does not exist");
-        }
-        User user = null;
+        assertChannelExists(channelId);
+        assertUserIsChannelMember(user.getId(), channelId);
 
-
-        if (principal instanceof UsernamePasswordAuthenticationToken token) {
-            Object userPrincipal = token.getPrincipal();
-            logger.info("token.getPrincipal(): {}", userPrincipal);
-
-            if (userPrincipal instanceof User u) {
-                user = u;
-            } else {
-                throw new CustomException(ErrorType.UNAUTHORIZED, "Unable to extract user from principal");
-            }
-        }
-
-        if (user == null || user.getId() == null) {
-            throw new CustomException(ErrorType.UNAUTHORIZED, "User is missing or invalid");
-        }
-
-        chatService.markMessagesAsRead(channelId, user.getId(), LocalDateTime.now());
+        chatService.markMessagesAsRead(channelId, LocalDateTime.now());
         return ResponseEntity.ok().build();
+    }
+
+    // ——————————————————————————————————————————————
+    // Helper functions
+    // ——————————————————————————————————————————————
+    private void assertChannelExists(Long channelId) {
+        if (!channelService.existsByChannelId(channelId)) {
+            throw new CustomException(
+                    ErrorType.NOT_FOUND,
+                    "Channel not found with ID: " + channelId
+            );
+        }
+    }
+
+
+    private void assertUserIsChannelMember(Long userId, Long channelId) {
+        if (!channelMemberService.isUserMemberOfChannel(userId, channelId)) {
+            throw new CustomException(
+                    ErrorType.FORBIDDEN,
+                    "User " + userId + " is not a member of channel " + channelId
+            );
+        }
+    }
+
+    private void assertUserIsChannelCreator(Long userId, Long channelId) {
+        if (!channelService.existsByIdAndCreatorId(channelId, userId)) {
+            throw new CustomException(
+                    ErrorType.FORBIDDEN,
+                    "User " + userId + " is not the creator of channel " + channelId
+            );
+        }
     }
 }

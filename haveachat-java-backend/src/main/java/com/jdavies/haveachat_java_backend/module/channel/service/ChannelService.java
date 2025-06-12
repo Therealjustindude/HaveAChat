@@ -105,6 +105,10 @@ public class ChannelService {
         return channelRepository.existsById(channelId);
     }
 
+    public boolean existsByIdAndCreatorId(Long channelId, Long creatorId) {
+        return channelRepository.existsByIdAndCreatorId(channelId, creatorId);
+    }
+
     public Optional<Channel> getChannelById(Long channelId) {
         return channelRepository.findById(channelId);
     }
