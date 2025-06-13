@@ -69,10 +69,9 @@ public class ChannelController {
                         ErrorType.NOT_FOUND,
                         "Channel not found with ID: " + channelId
                 ));
+
         if (channel.getPrivateChannel()) {
             assertUserIsChannelMember(user.getId(), channelId);
-        } else {
-
         }
 
         List<UserDTO> members = channelService.listMembers(channelId);
@@ -99,7 +98,8 @@ public class ChannelController {
             @CurrentUser User user
     ) {
         assertChannelExists(channelId);
-        assertUserIsChannelCreator(userId, channelId);
+        assertUserIsChannelMember(userId, channelId);
+        assertUserIsChannelCreator(user.getId(), channelId);
 
         channelService.removeMember(channelId, userId);
         return ResponseEntity.noContent().build();
