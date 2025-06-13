@@ -6,8 +6,8 @@
     "target": "ES2022",
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "baseUrl": ".",
     "types": ["vite/client"],
+    "baseUrl": ".",
     "paths": {
       "@haveachat/*": ["./src/*"]
     }

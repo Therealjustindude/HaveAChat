@@ -2,6 +2,8 @@ import { useAuth } from "@haveachat/auth/AuthProvider";
 import { API_BASE_URL } from "@haveachat/utils/ApiBaseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from '@tanstack/react-router';
+import { Button } from "@haveachat/components/ui/button";
+import { IconBrandGmail } from '@tabler/icons-react';
 
 
 export const Login = () => {
@@ -31,11 +33,12 @@ export const Login = () => {
   });
   
   return (
-		<button
-      type="button"
+		<Button
       onClick={() => login()}
+      variant="outline"
+      size="sm"
     >
-      Google Sign In
-    </button>
+      <IconBrandGmail /> Google Sign In
+    </Button>
 	);
 }

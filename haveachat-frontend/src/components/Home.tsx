@@ -1,4 +1,6 @@
 import { useAuth } from "@haveachat/auth/AuthProvider";
+import { Button } from "@haveachat/components/ui/button";
+
 
 export const Home = () => {
 	const { logout } = useAuth();
@@ -15,12 +17,11 @@ export const Home = () => {
 	return (
 		<>
 			<h1>Home</h1>
-			<button
-				type="button"
+			<Button
 				onClick={handleLogout}
 			>
 				Log out
-			</button>
+			</Button>
 		</>
 	);
 }
