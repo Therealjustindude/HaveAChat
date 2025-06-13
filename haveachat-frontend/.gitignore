@@ -7,8 +7,5 @@ npm-debug.log*
 .env.*.local
 .env.local
 
-# Vinxi cache
-.vinxi/
-
 # Build output (Nuxt, SvelteKit with certain adapters, etc.)
 .output/
