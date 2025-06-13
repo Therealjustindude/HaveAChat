@@ -103,7 +103,7 @@ export class AuthControllerApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/auth/oauth/auth/refresh`,
+            path: `/auth/oauth/refresh-token`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,

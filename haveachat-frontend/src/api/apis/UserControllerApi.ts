@@ -15,12 +15,19 @@
 
 import * as runtime from '../runtime';
 import type {
+  User,
   UserDTO,
 } from '../models/index';
 import {
+    UserFromJSON,
+    UserToJSON,
     UserDTOFromJSON,
     UserDTOToJSON,
 } from '../models/index';
+
+export interface GetAuthenticatedUserInfoRequest {
+    user: User;
+}
 
 export interface GetUserInfoByIdRequest {
     id: number;
@@ -33,8 +40,19 @@ export class UserControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async getAuthenticatedUserInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDTO>> {
+    async getAuthenticatedUserInfoRaw(requestParameters: GetAuthenticatedUserInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDTO>> {
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling getAuthenticatedUserInfo().'
+            );
+        }
+
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -50,8 +68,8 @@ export class UserControllerApi extends runtime.BaseAPI {
 
     /**
      */
-    async getAuthenticatedUserInfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDTO> {
-        const response = await this.getAuthenticatedUserInfoRaw(initOverrides);
+    async getAuthenticatedUserInfo(requestParameters: GetAuthenticatedUserInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDTO> {
+        const response = await this.getAuthenticatedUserInfoRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

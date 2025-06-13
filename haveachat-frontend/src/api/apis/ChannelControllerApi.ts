@@ -15,39 +15,50 @@
 
 import * as runtime from '../runtime';
 import type {
+  AddChannelMemberRequest,
   Channel,
   CreateChannelRequest,
+  User,
   UserDTO,
 } from '../models/index';
 import {
+    AddChannelMemberRequestFromJSON,
+    AddChannelMemberRequestToJSON,
     ChannelFromJSON,
     ChannelToJSON,
     CreateChannelRequestFromJSON,
     CreateChannelRequestToJSON,
+    UserFromJSON,
+    UserToJSON,
     UserDTOFromJSON,
     UserDTOToJSON,
 } from '../models/index';
 
 export interface AddMemberRequest {
     channelId: number;
-    body: number;
+    user: User;
+    addChannelMemberRequest: AddChannelMemberRequest;
 }
 
 export interface CreateChannelOperationRequest {
+    user: User;
     createChannelRequest: CreateChannelRequest;
 }
 
 export interface GetChannelRequest {
     channelId: number;
+    user: User;
 }
 
 export interface ListMembersRequest {
     channelId: number;
+    user: User;
 }
 
 export interface RemoveMemberRequest {
     channelId: number;
     userId: number;
+    user: User;
 }
 
 /**
@@ -65,14 +76,25 @@ export class ChannelControllerApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['body'] == null) {
+        if (requestParameters['user'] == null) {
             throw new runtime.RequiredError(
-                'body',
-                'Required parameter "body" was null or undefined when calling addMember().'
+                'user',
+                'Required parameter "user" was null or undefined when calling addMember().'
+            );
+        }
+
+        if (requestParameters['addChannelMemberRequest'] == null) {
+            throw new runtime.RequiredError(
+                'addChannelMemberRequest',
+                'Required parameter "addChannelMemberRequest" was null or undefined when calling addMember().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -83,7 +105,7 @@ export class ChannelControllerApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['body'] as any,
+            body: AddChannelMemberRequestToJSON(requestParameters['addChannelMemberRequest']),
         }, initOverrides);
 
         return new runtime.VoidApiResponse(response);
@@ -98,6 +120,13 @@ export class ChannelControllerApi extends runtime.BaseAPI {
     /**
      */
     async createChannelRaw(requestParameters: CreateChannelOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Channel>> {
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling createChannel().'
+            );
+        }
+
         if (requestParameters['createChannelRequest'] == null) {
             throw new runtime.RequiredError(
                 'createChannelRequest',
@@ -106,6 +135,10 @@ export class ChannelControllerApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -139,7 +172,18 @@ export class ChannelControllerApi extends runtime.BaseAPI {
             );
         }
 
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling getChannel().'
+            );
+        }
+
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -170,12 +214,23 @@ export class ChannelControllerApi extends runtime.BaseAPI {
             );
         }
 
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling listMembers().'
+            );
+        }
+
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/{channelId}/members`.replace(`{${"channelId"}}`, encodeURIComponent(String(requestParameters['channelId']))),
+            path: `/api/channels/{channelId}/members`.replace(`{${"channelId"}}`, encodeURIComponent(String(requestParameters['channelId']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -208,12 +263,23 @@ export class ChannelControllerApi extends runtime.BaseAPI {
             );
         }
 
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling removeMember().'
+            );
+        }
+
         const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/{channelId}/members/{userId}`.replace(`{${"channelId"}}`, encodeURIComponent(String(requestParameters['channelId']))).replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters['userId']))),
+            path: `/api/channels/{channelId}/members/{userId}`.replace(`{${"channelId"}}`, encodeURIComponent(String(requestParameters['channelId']))).replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters['userId']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,

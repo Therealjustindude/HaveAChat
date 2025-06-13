@@ -54,7 +54,7 @@ export interface Channel {
      * @type {boolean}
      * @memberof Channel
      */
-    isPrivate?: boolean;
+    privateChannel?: boolean;
 }
 
 /**
@@ -79,7 +79,7 @@ export function ChannelFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
         'description': json['description'] == null ? undefined : json['description'],
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'creatorId': json['creatorId'] == null ? undefined : json['creatorId'],
-        'isPrivate': json['isPrivate'] == null ? undefined : json['isPrivate'],
+        'privateChannel': json['privateChannel'] == null ? undefined : json['privateChannel'],
     };
 }
 
@@ -99,7 +99,7 @@ export function ChannelToJSONTyped(value?: Channel | null, ignoreDiscriminator: 
         'description': value['description'],
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'creatorId': value['creatorId'],
-        'isPrivate': value['isPrivate'],
+        'privateChannel': value['privateChannel'],
     };
 }
 

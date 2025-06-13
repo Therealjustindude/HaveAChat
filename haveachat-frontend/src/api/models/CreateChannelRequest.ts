@@ -36,7 +36,7 @@ export interface CreateChannelRequest {
      * @type {boolean}
      * @memberof CreateChannelRequest
      */
-    isPrivate?: boolean;
+    privateChannel?: boolean;
 }
 
 /**
@@ -58,7 +58,7 @@ export function CreateChannelRequestFromJSONTyped(json: any, ignoreDiscriminator
         
         'name': json['name'] == null ? undefined : json['name'],
         'description': json['description'] == null ? undefined : json['description'],
-        'isPrivate': json['isPrivate'] == null ? undefined : json['isPrivate'],
+        'privateChannel': json['privateChannel'] == null ? undefined : json['privateChannel'],
     };
 }
 
@@ -75,7 +75,7 @@ export function CreateChannelRequestToJSONTyped(value?: CreateChannelRequest | n
         
         'name': value['name'],
         'description': value['description'],
-        'isPrivate': value['isPrivate'],
+        'privateChannel': value['privateChannel'],
     };
 }
 

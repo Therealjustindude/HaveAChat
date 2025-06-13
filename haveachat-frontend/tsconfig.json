@@ -7,8 +7,9 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "baseUrl": ".",
+    "types": ["vite/client"],
     "paths": {
-      "@haveachat/*": ["./app/*"]
+      "@haveachat/*": ["./src/*"]
     }
   }
 }
