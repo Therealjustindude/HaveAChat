@@ -8,7 +8,9 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from '@haveachat/auth/AuthProvider';
-
+import appCss from "@haveachat/styles/app.css?url"
+import { ThemeProvider } from '@haveachat/components/theme/ThemeProvider';
+import { AppLayout } from '@haveachat/components/AppLayout';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,12 @@ export const Route = createRootRoute({
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'HaveAChat' },
     ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+    ],
   }),
   component: RootComponent,
 });
@@ -31,7 +39,11 @@ function RootComponent() {
       <GoogleOAuthProvider clientId={clientId}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <Outlet />
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+              <AppLayout>
+                <Outlet />
+              </AppLayout>
+            </ThemeProvider>
           </AuthProvider>
         </QueryClientProvider>
       </GoogleOAuthProvider>

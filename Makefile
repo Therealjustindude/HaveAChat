@@ -103,8 +103,8 @@ test-backend: build
 # Frontend #
 ############
 build-frontend:
-	@echo "Building the frontend container..."
-	docker compose build frontend
+	@echo "Building the frontend container (no cache)..."
+	docker compose build --no-cache frontend
 	@echo "Frontend container has been built!"
 
 up-frontend:
@@ -119,7 +119,8 @@ down-frontend:
 
 reset-frontend:
 	@echo "Stopping and removing the frontend container..."
-	docker compose down --volumes frontend
-	@echo "Rebuilding and starting the frontend container..."
-	docker compose up -d --build frontend
+	docker compose rm -sf frontend
+	@echo "Rebuilding and starting the frontend container (no cache)..."
+	docker compose build --no-cache frontend
+	docker compose up -d frontend
 	@echo "Frontend container has been reset and is running!"

@@ -1,26 +1,13 @@
 import { useAuth } from "@haveachat/auth/AuthProvider";
 
 export const Home = () => {
-	const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      window.location.href = '/login';
-    } catch (err) {
-      console.error('Logout failed', err);
-    }
-  };
-
+	const { user } = useAuth();
 	return (
-		<>
-			<h1>Home</h1>
-			<button
-				type="button"
-				onClick={handleLogout}
-			>
-				Log out
-			</button>
-		</>
+		<div className="min-h-screen flex-col">
+			<div className="flex flex-col gap-1">
+				<h1 className="text-2xl">Welcome, {user?.name}</h1>
+				<p>Looks like a good day to play.</p>
+			</div>
+		</div>
 	);
 }
