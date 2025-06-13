@@ -1,12 +1,11 @@
 package com.jdavies.haveachat_java_backend.module.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
 import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "users")

@@ -1,29 +1,26 @@
 package com.jdavies.haveachat_java_backend.module.chat.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jdavies.haveachat_java_backend.module.channel.model.Channel;
-import com.jdavies.haveachat_java_backend.module.user.model.User;
-import org.hibernate.annotations.JdbcTypeCode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chats", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "channel_id"}))
-public class Chat {
+@Table(name = "chat_messages", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "channel_id"}))
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
-    private Channel channel;
+    @Column(name = "channel_id", nullable = false)
+    private Long channelId;
+
 
     @Column(nullable = false, updatable = false)
     private final Instant createdAt = Instant.now();
@@ -47,24 +44,24 @@ public class Chat {
     @Column(columnDefinition = "jsonb", nullable = false)
     private JsonNode message;
 
-    protected Chat() {
+    protected ChatMessage() {
     }
 
-    public Chat(User user, Channel channel) {
-        this.user = user;
-        this.channel = channel;
+    public ChatMessage(Long userId, Long channelId) {
+        this.userId = userId;
+        this.channelId = channelId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public Long getChannelId() {
+        return channelId;
     }
 
     public JsonNode getMessage() {

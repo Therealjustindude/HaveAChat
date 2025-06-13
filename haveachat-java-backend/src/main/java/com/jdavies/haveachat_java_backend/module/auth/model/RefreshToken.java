@@ -1,7 +1,11 @@
 package com.jdavies.haveachat_java_backend.module.auth.model;
 
 import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.Instant;
 
 @Entity

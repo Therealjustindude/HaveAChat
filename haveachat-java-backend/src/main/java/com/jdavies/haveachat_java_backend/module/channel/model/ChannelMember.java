@@ -1,6 +1,5 @@
 package com.jdavies.haveachat_java_backend.module.channel.model;
 
-import com.jdavies.haveachat_java_backend.module.user.model.User;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -16,12 +15,10 @@ public class ChannelMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
+    @Column(name = "channel_id", nullable = false)
     private Long channelId;
 
     @Column(nullable = false, updatable = false)

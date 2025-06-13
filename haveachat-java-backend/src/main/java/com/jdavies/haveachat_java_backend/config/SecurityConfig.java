@@ -1,4 +1,4 @@
-package com.jdavies.haveachat_java_backend.module.common.config;
+package com.jdavies.haveachat_java_backend.config;
 
 import com.jdavies.haveachat_java_backend.module.auth.service.RefreshTokenService;
 import com.jdavies.haveachat_java_backend.module.auth.util.JwtUtil;

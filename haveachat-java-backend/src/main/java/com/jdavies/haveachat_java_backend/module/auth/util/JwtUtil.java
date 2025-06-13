@@ -1,14 +1,11 @@
 package com.jdavies.haveachat_java_backend.module.auth.util;
 
 import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;

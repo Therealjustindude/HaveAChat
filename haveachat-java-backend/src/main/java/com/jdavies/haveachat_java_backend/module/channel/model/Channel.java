@@ -3,7 +3,6 @@ package com.jdavies.haveachat_java_backend.module.channel.model;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "channels")

@@ -4,10 +4,11 @@ import com.jdavies.haveachat_java_backend.module.common.oauth.AuthProvider;
 import com.jdavies.haveachat_java_backend.module.common.oauth.OAuthUserInfo;
 import com.jdavies.haveachat_java_backend.module.user.model.User;
 import com.jdavies.haveachat_java_backend.module.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -36,6 +37,10 @@ public class UserService {
 
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    public boolean existsByUserId(Long id) {
+        return userRepository.existsById(id);
     }
 
     // Create or update user based on OAuth info
