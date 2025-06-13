@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from '@haveachat/auth/AuthProvider';
 import appCss from "@haveachat/styles/app.css?url"
 import { ThemeProvider } from '@haveachat/components/theme/ThemeProvider';
+import { AppLayout } from '@haveachat/components/AppLayout';
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,9 @@ function RootComponent() {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-              <Outlet />
+              <AppLayout>
+                <Outlet />
+              </AppLayout>
             </ThemeProvider>
           </AuthProvider>
         </QueryClientProvider>
