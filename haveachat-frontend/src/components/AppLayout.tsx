@@ -27,14 +27,18 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 					<div className="flex gap-2 items-center">
 						⛳️ <p className="font-pacifico text-lg font-semibold text-green-600">Have A Chat</p>
 					</div>
-					<div className="hidden md:flex flex-col gap-2 items-start">
-						<Link to="/" className="[&.active]:font-bold">
-							Home
-						</Link>
-						<Link to="/chat" className="[&.active]:font-bold">
-							Chat
-						</Link>
-					</div>
+					{
+						user && (
+							<div className="hidden md:flex flex-col gap-2 items-start">
+								<Link to="/" className="[&.active]:font-bold">
+									Home
+								</Link>
+								<Link to="/chat" className="[&.active]:font-bold">
+									Chat
+								</Link>
+							</div>
+						)
+					}
 				</div>
 
 				<div className="flex items-center gap-2 justify-end">
@@ -57,14 +61,18 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 			</main>
 
 			{/* Mobile Footer Nav */}
-    <footer className="fixed bottom-0 left-0 right-0 bg-background border-t md:hidden flex justify-around items-center h-16 z-50">
-      <Link to="/" className="[&.active]:font-bold text-sm">
-        Home
-      </Link>
-      <Link to="/chat" className="[&.active]:font-bold text-sm">
-        Chat
-      </Link>
-    </footer>
+			{
+				user && (
+					<footer className="fixed bottom-0 left-0 right-0 bg-background border-t md:hidden flex justify-around items-center h-16 z-50">
+						<Link to="/" className="[&.active]:font-bold text-sm">
+							Home
+						</Link>
+						<Link to="/chat" className="[&.active]:font-bold text-sm">
+							Chat
+						</Link>
+					</footer>
+				)
+			}
 		</div>
   );
 }
