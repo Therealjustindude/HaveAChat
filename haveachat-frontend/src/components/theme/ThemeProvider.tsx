@@ -15,13 +15,13 @@ type ThemeContextType = {
 
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
+  theme: "dark",
   setTheme: () => {},
 });
 
 export const ThemeProvider = ({
   children,
-  defaultTheme = "light",
+  defaultTheme = "dark",
   storageKey = "haveachat-theme",
 }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
@@ -40,6 +40,14 @@ export const ThemeProvider = ({
       localStorage.setItem(storageKey, theme);
     }
   }, [theme, storageKey]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark", "system");
+      root.classList.add(theme);
+    }
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

@@ -39,7 +39,7 @@ function RootComponent() {
       <GoogleOAuthProvider clientId={clientId}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <ThemeProvider defaultTheme="dark" storageKey="haveachat-theme">
               <AppLayout>
                 <Outlet />
               </AppLayout>
