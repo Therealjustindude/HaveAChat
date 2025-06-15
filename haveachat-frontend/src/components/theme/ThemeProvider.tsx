@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 
-type Theme = "dark" | "light" | "system"
+type Theme = "dark" | "light"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -29,7 +29,7 @@ export const ThemeProvider = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem(storageKey) as Theme | null;
-      if (storedTheme && ["light", "dark", "system"].includes(storedTheme)) {
+      if (storedTheme && ["light", "dark"].includes(storedTheme)) {
         setTheme(storedTheme);
       }
     }
@@ -44,7 +44,7 @@ export const ThemeProvider = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const root = window.document.documentElement;
-      root.classList.remove("light", "dark", "system");
+      root.classList.remove("light", "dark");
       root.classList.add(theme);
     }
   }, [theme]);

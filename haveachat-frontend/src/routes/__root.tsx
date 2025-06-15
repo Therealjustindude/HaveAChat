@@ -1,9 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import {
   Outlet,
   HeadContent,
   Scripts,
-  useRouteContext,
   createRootRoute,
 } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
