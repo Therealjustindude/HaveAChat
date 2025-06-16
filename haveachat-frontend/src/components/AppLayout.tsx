@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { ThemeToggle } from "@haveachat/components/theme/ThemeToggle";
 import { useAuth } from "@haveachat/auth/AuthProvider";
-import { IconLogout } from "@tabler/icons-react";
+import { IconLogout, IconUserFilled } from "@tabler/icons-react";
 import { Button } from "@haveachat/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
@@ -21,7 +21,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 	return (
 		<div className="min-h-screen flex flex-col md:flex-row bg-background text-foreground">
 			{/* Sidebar (header on desktop) */}
-			<nav className="p-4 border-b bg-background md:border-b-0 md:border-r flex justify-between md:flex-col md:justify-between md:w-auto sticky top-0  md:h-screen z-50">
+			<nav className="p-4 border-b  bg-background md:border-b-0 flex justify-between md:flex-col md:justify-between md:w-auto sticky top-0  md:h-screen z-50">
 				{/* Desktop-only nav links */}
 				<div className="flex md:flex-col gap-2 items-center">
 					<div className="flex gap-2 items-center">
@@ -41,22 +41,31 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 					}
 				</div>
 
-				<div className="flex items-center gap-2 justify-end">
+				<div className="flex md:flex-col gap-2">
 					{user && (
-						<Button
-							onClick={handleLogout}
-							variant="outline"
-							size="sm"
-						>
-							<IconLogout /> Logout
-						</Button>
+						<div className="flex items-center gap-2">
+							<IconUserFilled className="text-green-400 w-4 h-4" />
+							<span className="hidden md:inline font-bold text-sm">{user?.name}</span>
+						</div>	
 					)}
-					<ThemeToggle />
+					<div className="flex items-center gap-2 justify-end">
+						{user && (
+							<Button
+								onClick={handleLogout}
+								variant="outline"
+								size="sm"
+							>
+								<IconLogout /> Logout
+							</Button>
+						)}
+						<ThemeToggle />
+					</div>
 				</div>
+
 			</nav>
 
 			{/* Main content area */}
-			<main className="flex-1 p-4">
+			<main className="flex-1">
 				{children}
 			</main>
 
