@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import {
   Outlet,
   HeadContent,
@@ -11,7 +11,6 @@ import { AuthProvider } from '@haveachat/auth/AuthProvider';
 import appCss from "@haveachat/styles/app.css?url"
 import { ThemeProvider } from '@haveachat/components/theme/ThemeProvider';
 import { AppLayout } from '@haveachat/components/AppLayout';
-
 const queryClient = new QueryClient();
 
 const clientId = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID;
@@ -39,7 +38,7 @@ function RootComponent() {
       <GoogleOAuthProvider clientId={clientId}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <ThemeProvider defaultTheme="dark" storageKey="haveachat-theme">
               <AppLayout>
                 <Outlet />
               </AppLayout>
@@ -56,6 +55,21 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
     <html>
       <head>
         <HeadContent />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+          as="style"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+          />
+        </noscript>
       </head>
       <body>
         {children}

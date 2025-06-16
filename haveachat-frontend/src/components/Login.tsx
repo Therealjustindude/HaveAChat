@@ -43,7 +43,6 @@ export const Login = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-8">
         <div className="flex items-center gap-2">
-          {/* <IconGolf className="text-green-600 w-12 h-12" /> */}
           <div className="flex flex-col gap-2">
             <p className="font-pacifico text-5xl font-semibold text-green-600">Have A Chat</p>
             <p className="text-xs text-muted-foreground">A social app for golfers who'd rather be playing.</p>
