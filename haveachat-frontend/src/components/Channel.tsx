@@ -7,7 +7,7 @@ export const Channel = ({
 	isFetching
 } : ChannelProps) => {
 	return (
-		<div className="min-h-screen flex-col">
+		<div className="min-h-screen flex-col p-4">
 			{isFetching ? (
 				<p>Loading...</p>
 			) : (chatHistory?.length ?? 0) > 0 ? (
