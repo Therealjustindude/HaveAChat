@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   // Only fetch user if we think we're logged in
   const { data: user, isLoading: userIsLoading, refetch } = useMe({ enabled: shouldFetchUser });
+  const logOutMutation = useLogOutMutation();
 
   const login = async () => {
     if (typeof window !== 'undefined') {
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     setShouldFetchUser(false);
     queryClient.removeQueries({ queryKey: ['me'] });
     // Optionally call your logout mutation
-    useLogOutMutation().mutate();
+    logOutMutation.mutate();
   };
 
   // Optionally, clear flag if we get a 401 from /api/user
