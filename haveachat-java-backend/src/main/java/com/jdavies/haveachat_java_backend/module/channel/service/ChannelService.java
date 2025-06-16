@@ -33,6 +33,11 @@ public class ChannelService {
         this.userService = userService;
     }
 
+    public List<Channel> getChannelsForUser(User user) {
+        List<Long> channelIds = channelMemberService.getChannelIdsForUser(user.getId());
+        return channelRepository.findAllById(channelIds);
+    }
+
     //    createChannel - desc, name, isPrivate, creator(user)
     public Channel createChannel(CreateChannelRequest req, User user) {
         if (channelRepository.existsByName(req.getName())) {

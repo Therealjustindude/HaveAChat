@@ -33,6 +33,12 @@ public class ChannelController {
     // ——————————————————————————————————————————————
     // Channel
     // ——————————————————————————————————————————————
+    @GetMapping("")
+    public ResponseEntity<List<Channel>> getChannelsForUser(@CurrentUser User user) {
+        List<Channel> channels = channelService.getChannelsForUser(user);
+        return ResponseEntity.ok(channels);
+    }
+
     @PostMapping("")
     public ResponseEntity<Channel> createChannel(
             @RequestBody CreateChannelRequest req,

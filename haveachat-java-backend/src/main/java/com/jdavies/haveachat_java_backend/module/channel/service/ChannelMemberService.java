@@ -26,6 +26,14 @@ public class ChannelMemberService {
         return channelMemberRepository.findByUserId(userId);
     }
 
+    public List<Long> getChannelIdsForUser(Long userId) {
+        List<ChannelMember> memberships = channelMemberRepository.findByUserId(userId);
+        return memberships.stream()
+                .map(ChannelMember::getChannelId)
+                .distinct()
+                .toList();
+    }
+
     public boolean isUserMemberOfChannel(Long userId, Long channelId) {
         return channelMemberRepository.existsByUserIdAndChannelId(userId, channelId);
     }
