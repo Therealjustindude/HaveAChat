@@ -1,5 +1,6 @@
 package com.jdavies.haveachat_java_backend.module.channel.model;
 
+import com.jdavies.haveachat_java_backend.module.channel.util.ChannelType;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -11,7 +12,10 @@ public class Channel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,  unique = true)
+    @Enumerated(EnumType.STRING)
+    private ChannelType type; // PUBLIC, PRIVATE, DM
+
+    @Column
     private String name;
 
     @Column(nullable = true)
@@ -64,5 +68,13 @@ public class Channel {
 
     public Long getCreatorId() {
         return creatorId;
+    }
+
+    public ChannelType getType() {
+        return type;
+    }
+
+    public void setType(ChannelType type) {
+        this.type = type;
     }
 }
