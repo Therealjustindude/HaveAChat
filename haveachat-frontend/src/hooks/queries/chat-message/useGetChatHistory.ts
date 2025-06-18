@@ -18,6 +18,7 @@ export const useGetChatHistory = (
 		queryFn: () => fetchChatHistory(channelId),
 		enabled: !!channelId,
 		retry: false,
+		staleTime: 1000 * 60,
 		...options,
 	});
 };

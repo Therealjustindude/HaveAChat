@@ -1,4 +1,4 @@
-import { Channel } from "@haveachat/api";
+import { Channel, ChannelTypeEnum } from "@haveachat/api";
 import { IconGolfFilled, IconPlus } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -8,16 +8,36 @@ import {
   AccordionContent,
 } from "@haveachat/components/ui/accordion";
 import { Button } from "@haveachat/components/ui/button";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { CreateChannelDialog } from "@haveachat/components/ui/CreateChannelDialog";
+import { CreateDMDialog } from "@haveachat/components/ui/CreateDMDialog";
 
 export const ChannelList = ({
   channels,
   isFetching,
 }: ChannelListProps) => {
-  const publicChannels = (channels ?? []).filter((c) => !c.privateChannel);
-  const directMessages = (channels ?? []).filter((c) => c.privateChannel);
+  const [channelDialogOpen, setChannelDialogOpen] = useState(false);
+  const [dmDialogOpen, setDMDialogOpen] = useState(false);
+  
+  const queryClient = useQueryClient();
+
+  const filteredChannels = (channels ?? []).filter((c) => c.type !== ChannelTypeEnum.Dm);
+
+  const directMessages = (channels ?? []).filter((c) => c.type === ChannelTypeEnum.Dm);
 
   return (
     <div className="py-2 px-4">
+      <CreateChannelDialog
+        open={channelDialogOpen}
+        onOpenChange={setChannelDialogOpen}
+        onCreated={() => queryClient.invalidateQueries({ queryKey: ['channels'] })}
+      />
+      <CreateDMDialog
+        open={dmDialogOpen}
+        onOpenChange={setDMDialogOpen}
+        onCreated={() => queryClient.invalidateQueries({ queryKey: ['channels'] })}
+      />
       {isFetching ? (
         <p>Loading...</p>
       ) : (channels?.length ?? 0) > 0 ? (
@@ -35,7 +55,7 @@ export const ChannelList = ({
 								tabIndex={0}
 								onClick={(e) => {
 									e.stopPropagation(); // Prevents accordion toggle
-									console.log("add channel button clicked")
+									setChannelDialogOpen(true);
 								}}
 								className="h-0.5 w-0.5 rounded hover:bg-accent cursor-pointer"
 								aria-label="start a new channel"
@@ -44,9 +64,9 @@ export const ChannelList = ({
 							</Button>
 						</div>
             <AccordionContent>
-              {publicChannels.length > 0 ? (
+              {filteredChannels.length > 0 ? (
                 <div className="flex flex-col gap-2">
-                  {publicChannels.map((channel) => (
+                  {filteredChannels.map((channel) => (
                     <Link
                       key={channel.id}
                       to="/chat/$channelId"
@@ -74,7 +94,7 @@ export const ChannelList = ({
 									tabIndex={0}
 									onClick={(e) => {
 										e.stopPropagation(); // Prevents accordion toggle
-										console.log("add DM button clicked")
+										setDMDialogOpen(true);
 									}}
 									className="h-0.5 w-0.5 rounded hover:bg-accent cursor-pointer"
 									aria-label="Start a direct message"
@@ -104,8 +124,39 @@ export const ChannelList = ({
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      ) : (
-        <p>No channels for user</p>
+        ) : (
+        <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="text-foreground">Create a Channel</p> 
+          <Button
+            type="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents accordion toggle
+              setChannelDialogOpen(true);
+            }}
+            className="h-0.5 w-0.5 rounded hover:bg-accent cursor-pointer"
+            aria-label="start a new channel"
+          >
+            <IconPlus />
+          </Button>
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-foreground">Start a Direct Message</p>  
+          <Button
+            type="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents accordion toggle
+              setDMDialogOpen(true);
+            }}
+            className="h-0.5 w-0.5 rounded hover:bg-accent cursor-pointer"
+            aria-label="Start a direct message"
+          >
+            <IconPlus />
+          </Button>
+        </div>
+        </div>
       )}
     </div>
   );

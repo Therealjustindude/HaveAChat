@@ -1,11 +1,15 @@
 package com.jdavies.haveachat_java_backend.module.channel.dto;
 
+import com.jdavies.haveachat_java_backend.module.channel.util.ChannelType;
+
 public class CreateChannelRequest {
     private String name;
 
     private String description;
 
     private boolean privateChannel = false;
+
+    private ChannelType type = ChannelType.PUBLIC;
 
     public CreateChannelRequest() {
     }
@@ -33,5 +37,13 @@ public class CreateChannelRequest {
 
     public void setPrivateChannel(boolean privateChannel) {
         this.privateChannel = privateChannel;
+    }
+
+    public ChannelType getType() {
+        return type;
+    }
+
+    public void setType(ChannelType type) {
+        this.type = type;
     }
 }

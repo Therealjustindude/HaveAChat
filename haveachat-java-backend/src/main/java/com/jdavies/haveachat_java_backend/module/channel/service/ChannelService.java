@@ -4,6 +4,7 @@ import com.jdavies.haveachat_java_backend.module.channel.dto.CreateChannelReques
 import com.jdavies.haveachat_java_backend.module.channel.model.Channel;
 import com.jdavies.haveachat_java_backend.module.channel.model.ChannelMember;
 import com.jdavies.haveachat_java_backend.module.channel.repository.ChannelRepository;
+import com.jdavies.haveachat_java_backend.module.channel.util.ChannelType;
 import com.jdavies.haveachat_java_backend.module.exception.CustomException;
 import com.jdavies.haveachat_java_backend.module.exception.ErrorType;
 import com.jdavies.haveachat_java_backend.module.user.dto.UserDTO;
@@ -40,15 +41,23 @@ public class ChannelService {
 
     //    createChannel - desc, name, isPrivate, creator(user)
     public Channel createChannel(CreateChannelRequest req, User user) {
-        if (channelRepository.existsByName(req.getName())) {
-            throw new CustomException(ErrorType.CONFLICT, "Channel name already exists");
+        if (req.getType() != ChannelType.DM) {
+            if (req.getName() == null || req.getName().isBlank()) {
+                throw new CustomException(ErrorType.BAD_REQUEST, "Channel name is required");
+            }
+
+            if (channelRepository.existsByName(req.getName())) {
+                throw new CustomException(ErrorType.CONFLICT, "Channel name already exists");
+            }
         }
 
         User creator = this.userService.findByEmail(user.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND, "User not found with userEmail: " + user.getEmail()));
 
         Channel channel = new Channel();
+
         channel.setName(req.getName());
+        channel.setType(req.getType());
         channel.setDescription(req.getDescription());
         channel.setPrivateChannel(Boolean.TRUE.equals(req.getPrivateChannel()));
         channel.setCreatorId(creator.getId());

@@ -50,6 +50,10 @@ export interface GetChannelRequest {
     user: User;
 }
 
+export interface GetChannelsForUserRequest {
+    user: User;
+}
+
 export interface ListMembersRequest {
     channelId: number;
     user: User;
@@ -201,6 +205,41 @@ export class ChannelControllerApi extends runtime.BaseAPI {
      */
     async getChannel(requestParameters: GetChannelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Channel> {
         const response = await this.getChannelRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getChannelsForUserRaw(requestParameters: GetChannelsForUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Channel>>> {
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling getChannelsForUser().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/channels`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ChannelFromJSON));
+    }
+
+    /**
+     */
+    async getChannelsForUser(requestParameters: GetChannelsForUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Channel>> {
+        const response = await this.getChannelsForUserRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -47,7 +47,7 @@ From backend directory run this command to generate openapi spec:
     openapi-generator-cli generate \
     -g typescript-fetch \
     -i http://localhost:8080/v3/api-docs \
-    -o ../haveachat-frontend/app/api
+    -o ../haveachat-frontend/src/api
 ```
 
 ## License

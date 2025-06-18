@@ -30,6 +30,12 @@ export interface Channel {
      * @type {string}
      * @memberof Channel
      */
+    type?: ChannelTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Channel
+     */
     name?: string;
     /**
      * 
@@ -57,6 +63,18 @@ export interface Channel {
     privateChannel?: boolean;
 }
 
+
+/**
+ * @export
+ */
+export const ChannelTypeEnum = {
+    Public: 'PUBLIC',
+    Private: 'PRIVATE',
+    Dm: 'DM'
+} as const;
+export type ChannelTypeEnum = typeof ChannelTypeEnum[keyof typeof ChannelTypeEnum];
+
+
 /**
  * Check if a given object implements the Channel interface.
  */
@@ -75,6 +93,7 @@ export function ChannelFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
     return {
         
         'id': json['id'] == null ? undefined : json['id'],
+        'type': json['type'] == null ? undefined : json['type'],
         'name': json['name'] == null ? undefined : json['name'],
         'description': json['description'] == null ? undefined : json['description'],
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
@@ -95,6 +114,7 @@ export function ChannelToJSONTyped(value?: Channel | null, ignoreDiscriminator: 
     return {
         
         'id': value['id'],
+        'type': value['type'],
         'name': value['name'],
         'description': value['description'],
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),

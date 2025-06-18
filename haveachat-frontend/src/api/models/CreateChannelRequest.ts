@@ -37,7 +37,25 @@ export interface CreateChannelRequest {
      * @memberof CreateChannelRequest
      */
     privateChannel?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateChannelRequest
+     */
+    type?: CreateChannelRequestTypeEnum;
 }
+
+
+/**
+ * @export
+ */
+export const CreateChannelRequestTypeEnum = {
+    Public: 'PUBLIC',
+    Private: 'PRIVATE',
+    Dm: 'DM'
+} as const;
+export type CreateChannelRequestTypeEnum = typeof CreateChannelRequestTypeEnum[keyof typeof CreateChannelRequestTypeEnum];
+
 
 /**
  * Check if a given object implements the CreateChannelRequest interface.
@@ -59,6 +77,7 @@ export function CreateChannelRequestFromJSONTyped(json: any, ignoreDiscriminator
         'name': json['name'] == null ? undefined : json['name'],
         'description': json['description'] == null ? undefined : json['description'],
         'privateChannel': json['privateChannel'] == null ? undefined : json['privateChannel'],
+        'type': json['type'] == null ? undefined : json['type'],
     };
 }
 
@@ -76,6 +95,7 @@ export function CreateChannelRequestToJSONTyped(value?: CreateChannelRequest | n
         'name': value['name'],
         'description': value['description'],
         'privateChannel': value['privateChannel'],
+        'type': value['type'],
     };
 }
 

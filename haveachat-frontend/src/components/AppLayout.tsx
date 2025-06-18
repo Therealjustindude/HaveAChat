@@ -8,11 +8,10 @@ import { Link } from "@tanstack/react-router";
 
 export const AppLayout = ({ children }: { children: ReactNode }) => {
 	const { logout, user  } = useAuth();
-	
+
 	const handleLogout = async () => {
 		try {
 			await logout();
-			window.location.href = '/login';
 		} catch (err) {
 			console.error('Logout failed', err);
 		}
