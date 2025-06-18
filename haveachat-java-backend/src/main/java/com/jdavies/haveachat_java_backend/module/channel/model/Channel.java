@@ -13,6 +13,7 @@ public class Channel {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column
     private ChannelType type; // PUBLIC, PRIVATE, DM
 
     @Column
