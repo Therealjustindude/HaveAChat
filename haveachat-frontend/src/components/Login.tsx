@@ -15,7 +15,6 @@ import {
 
 export const Login = () => {
   const { navigate } = useRouter();
-  const { login: refreshUser } = useAuth();
 
   const login = useGoogleLogin({
     onSuccess: async tokenResponse => {
@@ -31,8 +30,6 @@ export const Login = () => {
       });
 
       if (!response.ok) throw new Error('Failed to login');
-
-      await refreshUser();
 
       navigate({ to: '/' });
     },

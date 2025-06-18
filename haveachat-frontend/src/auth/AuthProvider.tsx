@@ -1,66 +1,62 @@
 import { UserDTO } from '@haveachat/api';
-import { useLogOutMutation } from '@haveachat/hooks/mutations/user/useLogOutMutation';
 import { useMe } from '@haveachat/hooks/queries/user/useMe';
+import { useLogOutMutation } from '@haveachat/hooks/mutations/user/useLogOutMutation';
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
-interface AuthContextType {
+export type AuthState = {
   user: UserDTO | undefined;
   login: () => Promise<void>;
   logout: () => void;
   userIsLoading: boolean;
-}
+  userIsAuthed: boolean;
+};
+
+type AuthContextType = AuthState;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
-  const queryClient = useQueryClient();
-  // Track if we should try to fetch the user
-  const [shouldFetchUser, setShouldFetchUser] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return !!localStorage.getItem('isLoggedIn');
-    }
-    return false; // On server, don't fetch user
-  });
+type AuthProviderProps = {
+  children: React.ReactNode;
+  isAuthed: boolean;
+};
 
-  // Only fetch user if we think we're logged in
-  const { data: user, isLoading: userIsLoading, refetch } = useMe({ enabled: shouldFetchUser });
+export const AuthProvider = ({ children, isAuthed = false }: AuthProviderProps) => {
+  const queryClient = useQueryClient();
+  const [userIsAuthed, setUserIsAuthed] = useState(isAuthed);
+  const { data: user, isLoading } = useMe({ enabled: isAuthed });
+	const navigate = useNavigate();
+
   const logOutMutation = useLogOutMutation();
 
   const login = async () => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('isLoggedIn', 'true');
-    }
-    setShouldFetchUser(true);
-    await refetch();
+    // optional future login logic
   };
 
-  const logout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('isLoggedIn');
-    }
-    setShouldFetchUser(false);
+  const logout = async () => {
+    setUserIsAuthed(false);
     queryClient.removeQueries({ queryKey: ['me'] });
-    // Optionally call your logout mutation
     logOutMutation.mutate();
+    window.location.href = '/login';
+  };
+  
+  const authState: AuthState = {
+    user,
+    login,
+    logout,
+    userIsLoading: isLoading,
+    userIsAuthed: userIsAuthed,
   };
 
-  // Optionally, clear flag if we get a 401 from /api/user
-  useEffect(() => {
-    if (!user && !userIsLoading && shouldFetchUser) {
-      localStorage.removeItem('isLoggedIn');
-      setShouldFetchUser(false);
-    }
-  }, [user, userIsLoading, shouldFetchUser]);
-  
   return (
-    <AuthContext.Provider value={{ user, login, logout, userIsLoading }}>
+    <AuthContext.Provider value={authState}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthState => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;

@@ -39,6 +39,7 @@ services:
       args:
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
         VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+        VITE_JWT_SECRET: ${JWT_SECRET}
     container_name: haveachat-frontend
     depends_on:
       - backend
@@ -51,6 +52,7 @@ services:
       NODE_ENV: development
       VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       VITE_REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+      VITE_JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./haveachat-frontend:/app
       - /app/node_modules 

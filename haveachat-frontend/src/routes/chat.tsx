@@ -1,22 +1,36 @@
+import { useAuth } from '@haveachat/auth/AuthProvider';
 import { ChannelList } from '@haveachat/components/ChannelList';
 import { useGetChannels } from '@haveachat/hooks/queries/channel/useGetChannels';
 import { IconMessages } from '@tabler/icons-react';
-import { createFileRoute, Link, Outlet, useRouter, useMatches } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useMatches, Navigate, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/chat')({
+  beforeLoad: ({ context }) => {
+    if (!context.user?.isAuthed) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
   component: ChatLayout,
 });
 
 function ChatLayout() {
+  const { user } = useAuth();
   const matches = useMatches();
-  const { data: channels, isFetching } = useGetChannels();
+  const { data: channels, isFetching, error } = useGetChannels();
+  
   const channelMatch = matches.find(m => m.routeId === '/chat/$channelId');
   const channelId = channelMatch?.params?.channelId;
   const isChannel = Boolean(channelId);
-  
+
   const activeChannel = channels?.find(
     (channel) => String(channel.id) === String(channelId)
   );
+
+  if (!user && error?.message?.includes("Refresh token invalid or expired")) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
