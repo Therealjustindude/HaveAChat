@@ -27,6 +27,7 @@ services:
       GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
       JWT_SECRET: ${JWT_SECRET}
+      BUILD_STAGE: development
     ports:
       - "8080:8080"
     networks:

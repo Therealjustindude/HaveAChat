@@ -18,6 +18,7 @@ import type {
   AddChannelMemberRequest,
   Channel,
   CreateChannelRequest,
+  CreateDMRequest,
   User,
   UserDTO,
 } from '../models/index';
@@ -28,6 +29,8 @@ import {
     ChannelToJSON,
     CreateChannelRequestFromJSON,
     CreateChannelRequestToJSON,
+    CreateDMRequestFromJSON,
+    CreateDMRequestToJSON,
     UserFromJSON,
     UserToJSON,
     UserDTOFromJSON,
@@ -43,6 +46,11 @@ export interface AddMemberRequest {
 export interface CreateChannelOperationRequest {
     user: User;
     createChannelRequest: CreateChannelRequest;
+}
+
+export interface CreateDirectMessageChannelRequest {
+    user: User;
+    createDMRequest: CreateDMRequest;
 }
 
 export interface GetChannelRequest {
@@ -163,6 +171,51 @@ export class ChannelControllerApi extends runtime.BaseAPI {
      */
     async createChannel(requestParameters: CreateChannelOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Channel> {
         const response = await this.createChannelRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async createDirectMessageChannelRaw(requestParameters: CreateDirectMessageChannelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Channel>> {
+        if (requestParameters['user'] == null) {
+            throw new runtime.RequiredError(
+                'user',
+                'Required parameter "user" was null or undefined when calling createDirectMessageChannel().'
+            );
+        }
+
+        if (requestParameters['createDMRequest'] == null) {
+            throw new runtime.RequiredError(
+                'createDMRequest',
+                'Required parameter "createDMRequest" was null or undefined when calling createDirectMessageChannel().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['user'] != null) {
+            queryParameters['user'] = requestParameters['user'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/channels/dm`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateDMRequestToJSON(requestParameters['createDMRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ChannelFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async createDirectMessageChannel(requestParameters: CreateDirectMessageChannelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Channel> {
+        const response = await this.createDirectMessageChannelRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

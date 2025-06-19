@@ -61,6 +61,12 @@ export interface Channel {
      * @memberof Channel
      */
     privateChannel?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof Channel
+     */
+    golfCourseId?: number;
 }
 
 
@@ -68,9 +74,9 @@ export interface Channel {
  * @export
  */
 export const ChannelTypeEnum = {
-    Public: 'PUBLIC',
-    Private: 'PRIVATE',
-    Dm: 'DM'
+    Dm: 'DM',
+    Group: 'GROUP',
+    Course: 'COURSE'
 } as const;
 export type ChannelTypeEnum = typeof ChannelTypeEnum[keyof typeof ChannelTypeEnum];
 
@@ -99,6 +105,7 @@ export function ChannelFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'creatorId': json['creatorId'] == null ? undefined : json['creatorId'],
         'privateChannel': json['privateChannel'] == null ? undefined : json['privateChannel'],
+        'golfCourseId': json['golfCourseId'] == null ? undefined : json['golfCourseId'],
     };
 }
 
@@ -120,6 +127,7 @@ export function ChannelToJSONTyped(value?: Channel | null, ignoreDiscriminator: 
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'creatorId': value['creatorId'],
         'privateChannel': value['privateChannel'],
+        'golfCourseId': value['golfCourseId'],
     };
 }
 

@@ -55,6 +55,24 @@ export interface User {
      * @memberof User
      */
     lastLogin?: Date;
+    /**
+     * 
+     * @type {number}
+     * @memberof User
+     */
+    latitude?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof User
+     */
+    longitude?: number;
+    /**
+     * 
+     * @type {Date}
+     * @memberof User
+     */
+    locationUpdatedAt?: Date;
 }
 
 
@@ -90,6 +108,9 @@ export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User
         'email': json['email'] == null ? undefined : json['email'],
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'lastLogin': json['lastLogin'] == null ? undefined : (new Date(json['lastLogin'])),
+        'latitude': json['latitude'] == null ? undefined : json['latitude'],
+        'longitude': json['longitude'] == null ? undefined : json['longitude'],
+        'locationUpdatedAt': json['locationUpdatedAt'] == null ? undefined : (new Date(json['locationUpdatedAt'])),
     };
 }
 
@@ -110,6 +131,9 @@ export function UserToJSONTyped(value?: User | null, ignoreDiscriminator: boolea
         'email': value['email'],
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'lastLogin': value['lastLogin'] == null ? undefined : ((value['lastLogin']).toISOString()),
+        'latitude': value['latitude'],
+        'longitude': value['longitude'],
+        'locationUpdatedAt': value['locationUpdatedAt'] == null ? undefined : ((value['locationUpdatedAt']).toISOString()),
     };
 }
 
