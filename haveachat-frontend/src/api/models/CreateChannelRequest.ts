@@ -50,9 +50,9 @@ export interface CreateChannelRequest {
  * @export
  */
 export const CreateChannelRequestTypeEnum = {
-    Public: 'PUBLIC',
-    Private: 'PRIVATE',
-    Dm: 'DM'
+    Dm: 'DM',
+    Group: 'GROUP',
+    Course: 'COURSE'
 } as const;
 export type CreateChannelRequestTypeEnum = typeof CreateChannelRequestTypeEnum[keyof typeof CreateChannelRequestTypeEnum];
 
