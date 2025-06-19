@@ -21,17 +21,14 @@ import java.util.List;
 public class ChatMessageService {
     private static final Logger logger = LoggerFactory.getLogger(ChatMessageService.class);
     private final ChatMessageRepository chatRepo;
-    private final ChannelService channelService;
     private final UserService userService;
 
     @Autowired
     public ChatMessageService(
-            ChannelService channelService,
             UserService userService,
             ChatMessageRepository chatRepo
     ) {
         this.chatRepo= chatRepo;
-        this.channelService = channelService;
         this.userService = userService;
     }
 

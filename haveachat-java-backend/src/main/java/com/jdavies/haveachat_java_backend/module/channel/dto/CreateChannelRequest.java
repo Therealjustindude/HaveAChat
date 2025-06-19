@@ -9,7 +9,7 @@ public class CreateChannelRequest {
 
     private boolean privateChannel = false;
 
-    private ChannelType type = ChannelType.PUBLIC;
+    private ChannelType type;
 
     public CreateChannelRequest() {
     }

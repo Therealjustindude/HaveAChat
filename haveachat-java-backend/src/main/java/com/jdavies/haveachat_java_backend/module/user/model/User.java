@@ -39,6 +39,13 @@ public class User {
     @Column(nullable = true)
     private LocalDateTime lastLogin;
 
+    @Column(nullable = true)
+    private Double latitude;
+    @Column(nullable = true)
+    private Double longitude;
+    @Column(nullable = true)
+    private LocalDateTime locationUpdatedAt;
+
     public Long getId() {
         return id;
     }
@@ -94,5 +101,29 @@ public class User {
 
     public void setLastLogin(LocalDateTime lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public LocalDateTime getLocationUpdatedAt() {
+        return locationUpdatedAt;
+    }
+
+    public void setLocationUpdatedAt(LocalDateTime locationUpdatedAt) {
+        this.locationUpdatedAt = locationUpdatedAt;
     }
 }

@@ -14,7 +14,7 @@ public class Channel {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private ChannelType type; // PUBLIC, PRIVATE, DM
+    private ChannelType type; // DM, GROUP, COURSE
 
     @Column
     private String name;
@@ -30,6 +30,9 @@ public class Channel {
 
     @Column(nullable = false)
     private boolean privateChannel = false;
+
+    @Column(nullable = true)
+    private Long golfCourseId;
 
     public Long getId() {
         return id;
@@ -77,5 +80,12 @@ public class Channel {
 
     public void setType(ChannelType type) {
         this.type = type;
+    }
+    public Long getGolfCourseId() {
+        return golfCourseId;
+    }
+
+    public void setGolfCourseId(Long golfCourseId) {
+        this.golfCourseId = golfCourseId;
     }
 }

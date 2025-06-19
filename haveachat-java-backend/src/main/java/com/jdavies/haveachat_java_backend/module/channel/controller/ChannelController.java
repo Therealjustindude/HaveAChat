@@ -3,6 +3,7 @@ package com.jdavies.haveachat_java_backend.module.channel.controller;
 import com.jdavies.haveachat_java_backend.common.annotation.CurrentUser;
 import com.jdavies.haveachat_java_backend.module.channel.dto.AddChannelMemberRequest;
 import com.jdavies.haveachat_java_backend.module.channel.dto.CreateChannelRequest;
+import com.jdavies.haveachat_java_backend.module.channel.dto.CreateDMRequest;
 import com.jdavies.haveachat_java_backend.module.channel.model.Channel;
 import com.jdavies.haveachat_java_backend.module.channel.service.ChannelMemberService;
 import com.jdavies.haveachat_java_backend.module.channel.service.ChannelService;
@@ -46,6 +47,15 @@ public class ChannelController {
     ) {
         Channel createdChannel = channelService.createChannel(req, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdChannel);
+    }
+
+    @PostMapping("/dm")
+    public ResponseEntity<Channel> createDirectMessageChannel(
+            @RequestBody CreateDMRequest req,
+            @CurrentUser User user
+    ) {
+        Channel dmChannel = channelService.createDMChannel(req, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dmChannel);
     }
 
 
